@@ -3,7 +3,7 @@ from flask_restful import Api
 from venv.config import host, user, password, db_name
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__)
 api = Api(app)
 
 # Для работы кириллицы

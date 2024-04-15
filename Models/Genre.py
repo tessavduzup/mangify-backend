@@ -1,4 +1,12 @@
-class Genre:
-    def __init__(self, genre_id, genre_name):
-        self.genre_id = genre_id
-        self.genre_name = genre_name
+from application import db
+
+
+class Genre(db.Models):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    genre_name = db.Column(db.String, nullable=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'genre_name': self.genre_name
+        }
