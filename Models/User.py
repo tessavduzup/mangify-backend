@@ -5,8 +5,7 @@ class User(db.Models):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, nullable=True)
     email = db.Column(db.String, nullable=True)
-    psw = db.Column(db.String, nullable=True)  # ???
-    # КОРЗИНА???
+    psw = db.Column(db.String, nullable=True)
 
     def to_dict(self):
         return {

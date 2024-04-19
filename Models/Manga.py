@@ -1,6 +1,6 @@
 from application import db
 
-# Скачивание манги с сайта???
+
 class Manga(db.Models):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     author = db.Column(db.String, nullable=True)
