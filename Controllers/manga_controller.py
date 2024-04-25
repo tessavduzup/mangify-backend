@@ -24,7 +24,7 @@ class MangaController(Resource):
     @app.route("/v1/manga", methods=["POST"])
     def add_manga():
         """Обработчик запроса для добавления новой манги"""
-        request_data = request.get_json()
+        request_data = request
         _manga_service.add_manga(request_data)
 
         return jsonify({"genres": _manga_service.find_all_manga()})

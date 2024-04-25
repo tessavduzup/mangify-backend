@@ -1,7 +1,7 @@
 from application import db
 
 
-class Genre(db.Models):
+class Genre(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     genre_name = db.Column(db.String, nullable=True)
 

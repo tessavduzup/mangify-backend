@@ -1,5 +1,7 @@
 from Models.Manga import Manga
-from application import db
+from Models.Image import Image
+from application import db, UPLOAD_FOLDER
+import os
 
 
 class MangaService:
@@ -22,12 +24,21 @@ class MangaService:
 
         return all_manga
 
-    def add_manga(self, request_data):
+    def add_manga(self, request_data): # Not JSON, multipart!!!
         """По данным запроса добавляет новую мангу в БД"""
-        new_manga = Manga(author=request_data["author"], title=request_data["title"],
-                          # wrap=, TODO
-                          description=request_data["description"], genre=request_data["genre"],
-                          amount=request_data["amount"])
+        wrap = request_data.files['wrap']
+        filename = os.path.join(UPLOAD_FOLDER, wrap.filename)
+        wrap.save(filename)
+
+        new_wrap = Image(path_to_file=os.path.abspath(filename))
+
+        db.session.add(new_wrap)
+        db.session.flush()
+
+        new_manga = Manga(author=request_data.form.get('author'), title=request_data.form.get('title'),
+                          wrap_fk=new_wrap.id,
+                          description=request_data.form.get('description'), genre=request_data.form.get('genre'),
+                          price=request_data.form.get('image'))
 
         db.session.add(new_manga)
         db.session.commit()

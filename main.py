@@ -7,4 +7,5 @@ if __name__ == '__main__':
     api.add_resource(GenreController)
     api.add_resource(UserController)
     api.add_resource(MangaController)
+
     app.run(debug=True)

@@ -1,7 +1,7 @@
 from application import db
 
 
-class User(db.Models):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, nullable=True)
     email = db.Column(db.String, nullable=True)
@@ -11,6 +11,5 @@ class User(db.Models):
         return {
             'id': self.id,
             'username': self.username,
-            'email': self.email,
-            # 'psw': self.psw  # ???
+            'email': self.email
         }
