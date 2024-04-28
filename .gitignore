@@ -1,5 +1,6 @@
 config.py
 /venv
 /.vscode
+/.idea
 *.pyc
 */__pycache__
