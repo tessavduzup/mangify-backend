@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 config.py
-=======
 /venv
 /.vscode
->>>>>>> 3fd8e485e47379528849ab5b8d1b519548ff6531
+*.pyc
