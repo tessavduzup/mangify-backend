@@ -24,7 +24,17 @@ class MangaService:
 
         return all_manga
 
-    def add_manga(self, request_data): # Not JSON, multipart!!!
+    def find_top_manga(self):  # TODO
+        """Возвращает список популярной манги"""
+        top_manga = []
+        raw_manga_list = Manga.query.order_by().limit(5).all()
+        for row in raw_manga_list:
+            manga = row.to_dict()
+            top_manga.append(manga)
+
+        return top_manga
+
+    def add_manga(self, request_data):
         """По данным запроса добавляет новую мангу в БД"""
         wrap = request_data.files['wrap']
         filename = os.path.join(UPLOAD_FOLDER, wrap.filename)
@@ -38,7 +48,7 @@ class MangaService:
         new_manga = Manga(author=request_data.form.get('author'), title=request_data.form.get('title'),
                           wrap_fk=new_wrap.id,
                           description=request_data.form.get('description'), genre=request_data.form.get('genre'),
-                          price=request_data.form.get('image'))
+                          price=request_data.form.get('price'))
 
         db.session.add(new_manga)
         db.session.commit()

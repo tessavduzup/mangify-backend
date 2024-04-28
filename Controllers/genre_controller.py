@@ -9,19 +9,19 @@ _genre_service = GenreService()
 
 class GenreController(Resource):
     @staticmethod
-    @app.route("/v1/manga/genres", methods=["GET"])
+    @app.route("/api/v1/manga/genres", methods=["GET"])
     def get_genres():
         """Обработчик запроса, отображающий список всех жанров в JSON-формате"""
         return jsonify({"genres": _genre_service.find_all_genres()})
 
     @staticmethod
-    @app.route("/v1/manga/genres/<int:genre_id>", methods=["GET"])
+    @app.route("/api/v1/manga/genres/<int:genre_id>", methods=["GET"])
     def get_genre(genre_id):
         """Обработчик запроса, отображающий выбранный жанр в JSON-формате"""
         return jsonify(_genre_service.find_genre(genre_id))
 
     @staticmethod
-    @app.route("/v1/manga/genres", methods=["POST"])
+    @app.route("/api/v1/manga/genres", methods=["POST"])
     def add_genre():
         """Обработчик запроса для добавления нового жанра"""
         request_data = request.get_json()
@@ -30,7 +30,7 @@ class GenreController(Resource):
         return jsonify({"genres": _genre_service.find_all_genres()})
 
     @staticmethod
-    @app.route("/v1/manga/genres/<int:genre_id>", methods=["PUT"])
+    @app.route("/api/v1/manga/genres/<int:genre_id>", methods=["PUT"])
     def edit_genre(genre_id):
         """Обработчик запроса для редактирования жанра"""
         request_data = request.get_json()
@@ -39,7 +39,7 @@ class GenreController(Resource):
         return jsonify(_genre_service.find_genre(genre_id))
 
     @staticmethod
-    @app.route("/v1/manga/genres/<int:genre_id>", methods=["DELETE"])
+    @app.route("/api/v1/manga/genres/<int:genre_id>", methods=["DELETE"])
     def delete_genre(genre_id):
         """Обработчик запроса для удаления категории по ID"""
         _genre_service.delete_genre(genre_id)
