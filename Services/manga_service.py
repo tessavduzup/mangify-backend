@@ -1,6 +1,7 @@
 from Models.Manga import Manga
 from Models.Image import Image
 from application import db, UPLOAD_FOLDER
+from sqlalchemy import func
 import os
 
 
@@ -24,10 +25,10 @@ class MangaService:
 
         return all_manga
 
-    def find_top_manga(self):  # TODO
+    def find_top_manga(self):
         """Возвращает список популярной манги"""
         top_manga = []
-        raw_manga_list = Manga.query.order_by().limit(5).all()
+        raw_manga_list = Manga.query.order_by(func.random()).limit(5).all()
         for row in raw_manga_list:
             manga = row.to_dict()
             top_manga.append(manga)
@@ -36,19 +37,17 @@ class MangaService:
 
     def add_manga(self, request_data):
         """По данным запроса добавляет новую мангу в БД"""
-        wrap = request_data.files['wrap']
-        filename = os.path.join(UPLOAD_FOLDER, wrap.filename)
-        wrap.save(filename)
+        wrap = request_data['wrap']
 
-        new_wrap = Image(path_to_file=os.path.abspath(filename))
+        new_wrap = Image(path_to_file=wrap)
 
         db.session.add(new_wrap)
         db.session.flush()
 
-        new_manga = Manga(author=request_data.form.get('author'), title=request_data.form.get('title'),
+        new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           wrap_fk=new_wrap.id,
-                          description=request_data.form.get('description'), genre=request_data.form.get('genre'),
-                          price=request_data.form.get('price'))
+                          description=request_data['description'], genre=request_data['genre'],
+                          price=request_data['price'])
 
         db.session.add(new_manga)
         db.session.commit()

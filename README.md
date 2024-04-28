@@ -1,2 +1,2 @@
-# mungify
-Fullstack web application for reading manga
+# Mungify
+Backend part of Mungify

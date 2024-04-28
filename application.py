@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_restful import Api
-from config import host, user, password, db_name
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -10,7 +9,7 @@ CORS(app)
 
 # Для работы кириллицы
 app.json.ensure_ascii = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{user}:{password}@{host}/{db_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///mangify.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
