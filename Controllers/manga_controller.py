@@ -17,7 +17,7 @@ class MangaController(Resource):
     @staticmethod
     @app.route("/api/v1/top_manga", methods=["GET"])
     def get_top_manga():
-        """Обработчик запроса, отображающий список всей манги в JSON-формате"""
+        """Обработчик запроса, отображающий список популярной манги в JSON-формате"""
         return jsonify({"top_manga": _manga_service.find_top_manga()})
 
     @staticmethod
@@ -51,3 +51,16 @@ class MangaController(Resource):
         _manga_service.delete_manga(manga_id)
         return jsonify(manga_id)
 
+    @staticmethod
+    @app.route("/api/v1/delete_all_manga", methods=["DELETE"])
+    def delete_all_manga():
+        _manga_service.delete_all_manga()
+        return jsonify({"all_manga": _manga_service.find_all_manga()})
+
+    @staticmethod
+    @app.route("/api/v1/fill_up_manga_table", methods=["POST"])
+    def fill_up_manga_table():
+        request_data = request.get_json()
+        _manga_service.fill_up_manga_table(request_data)
+
+        return jsonify({"all_manga": _manga_service.find_all_manga()})

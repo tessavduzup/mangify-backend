@@ -42,3 +42,20 @@ class UserService:
             setattr(user, key, request_data[key])
 
         db.session.commit()
+
+    def delete_all_users(self):
+        users = Users.query.all()
+        for i in range(len(users)):
+            db.session.delete(users[i])
+
+        db.session.commit()
+
+    def fill_up_users_table(self, request_data):
+        for row in request_data:
+            new_user = Users(username=row["username"], email=row["email"],
+                             psw=generate_password_hash(row["psw"]))
+
+            db.session.add(new_user)
+            db.session.flush()
+
+        db.session.commit()

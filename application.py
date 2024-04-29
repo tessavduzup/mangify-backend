@@ -13,4 +13,3 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///mangify.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-UPLOAD_FOLDER = 'images'

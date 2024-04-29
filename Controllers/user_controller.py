@@ -46,3 +46,17 @@ class UserController(Resource):
         """Удаляет пользователя"""
         _user_service.delete_user(user_id)
         return jsonify(user_id)
+
+    @staticmethod
+    @app.route("/api/v1/delete_all_users", methods=["DELETE"])
+    def delete_all_users():
+        _user_service.delete_all_users()
+        return jsonify({"all_manga": _user_service.find_all_users()})
+
+    @staticmethod
+    @app.route("/api/v1/fill_up_users_table", methods=["POST"])
+    def fill_up_users_table():
+        request_data = request.get_json()
+        _user_service.fill_up_users_table(request_data)
+
+        return jsonify({"all_manga": _user_service.find_all_users()})

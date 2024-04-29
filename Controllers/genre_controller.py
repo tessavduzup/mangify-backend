@@ -44,3 +44,17 @@ class GenreController(Resource):
         """Обработчик запроса для удаления категории по ID"""
         _genre_service.delete_genre(genre_id)
         return jsonify(genre_id)
+
+    @staticmethod
+    @app.route("/api/v1/delete_all_genres", methods=["DELETE"])
+    def delete_all_genres():
+        _genre_service.delete_all_genres()
+        return jsonify({"genres": _genre_service.find_all_genres()})
+
+    @staticmethod
+    @app.route("/api/v1/fill_up_genres_table", methods=["POST"])
+    def fill_up_genres_table():
+        request_data = request.get_json()
+        _genre_service.fill_up_genres_table(request_data)
+
+        return jsonify({"genres": _genre_service.find_all_genres()})
