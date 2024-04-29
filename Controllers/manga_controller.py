@@ -50,17 +50,3 @@ class MangaController(Resource):
         """Обработчик запроса для удаления манги по ID"""
         _manga_service.delete_manga(manga_id)
         return jsonify(manga_id)
-
-    @staticmethod
-    @app.route("/api/v1/delete_all_manga", methods=["DELETE"])
-    def delete_all_manga():
-        _manga_service.delete_all_manga()
-        return jsonify({"all_manga": _manga_service.find_all_manga()})
-
-    @staticmethod
-    @app.route("/api/v1/fill_up_manga_table", methods=["POST"])
-    def fill_up_manga_table():
-        request_data = request.get_json()
-        _manga_service.fill_up_manga_table(request_data)
-
-        return jsonify({"all_manga": _manga_service.find_all_manga()})

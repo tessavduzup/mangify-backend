@@ -40,17 +40,4 @@ class GenreService:
         genre.genre_name = request_data["genre_name"]
         db.session.commit()
 
-    def delete_all_genres(self):
-        genres = Genre.query.all()
-        for i in range(len(genres)):
-            db.session.delete(genres[i])
 
-        db.session.commit()
-
-    def fill_up_genres_table(self, request_data):
-        for row in request_data:
-            new_genre = Genre(genre_name=row['genre_name'])
-            db.session.add(new_genre)
-            db.session.flush()
-
-        db.session.commit()
