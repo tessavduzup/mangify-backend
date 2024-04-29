@@ -62,3 +62,27 @@ class MangaService:
             setattr(manga, key, request_data[key])
 
         db.session.commit()
+
+    def delete_all_manga(self):
+        manga = Manga.query.all()
+        for i in range(len(manga)):
+            db.session.delete(manga[i])
+
+        db.session.commit()
+
+    def fill_up_manga_table(self, request_data):
+        for row in request_data:
+            new_wrap = Image(wrap_path=row['wrap_path'])
+
+            db.session.add(new_wrap)
+            db.session.flush()
+
+            new_manga = Manga(author=row['author'], title=row['title'],
+                              title_en=row['title-en'], wrap_fk=new_wrap.id,
+                              description=row['description'], genre=row['genre'],
+                              price=row['price'])
+
+            db.session.add(new_manga)
+            db.session.flush()
+
+        db.session.commit()
