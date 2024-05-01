@@ -1,3 +1,4 @@
+from Models.Genre import Genre
 from Models.Manga import Manga
 from Models.Image import Image
 from application import db
@@ -41,9 +42,15 @@ class MangaService:
         db.session.add(new_wrap)
         db.session.flush()
 
+        genres = request_data['genre']
+        genres_id = []
+        for genre in genres:
+            genre_row = Genre.query.filter_by(genre_name=genre).first()
+            genres_id.append(genre_row.id)
+
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
-                          description=request_data['description'], genre=request_data['genre'],
+                          description=request_data['description'], genre=genres_id,
                           price=request_data['price'])
 
         db.session.add(new_manga)
@@ -68,6 +75,12 @@ class MangaService:
         for i in range(len(manga)):
             db.session.delete(manga[i])
 
+        db.session.flush()
+
+        images = Image.query.all()
+        for i in range(len(images)):
+            db.session.delete(images[i])
+
         db.session.commit()
 
     def fill_up_manga_table(self, request_data):
@@ -77,12 +90,18 @@ class MangaService:
             db.session.add(new_wrap)
             db.session.flush()
 
+            genres = row['genre']
+            genres_id = []
+            for genre in genres:
+                genre_row = Genre.query.filter_by(genre_name=genre).first()
+                genres_id.append(genre_row.id)
+
             new_manga = Manga(author=row['author'], title=row['title'],
                               title_en=row['title-en'], wrap_fk=new_wrap.id,
-                              description=row['description'], genre=row['genre'],
+                              description=row['description'], genre=genres_id,
                               price=row['price'])
 
             db.session.add(new_manga)
-            db.session.flush()
+            db.session.commit()
 
         db.session.commit()

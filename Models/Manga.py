@@ -1,3 +1,4 @@
+from sqlalchemy.dialects.postgresql import ARRAY
 from Models.Image import Image
 from application import db
 
@@ -9,7 +10,7 @@ class Manga(db.Model):
     author = db.Column(db.String, nullable=True)
     wrap_fk = db.Column(db.Integer, db.ForeignKey('image.id'), nullable=True)
     description = db.Column(db.Text, nullable=True)
-    genre = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=True)
+    genre = db.Column(ARRAY(db.Integer), nullable=True)
     price = db.Column(db.Integer, nullable=True)
 
     @staticmethod
@@ -29,5 +30,14 @@ class Manga(db.Model):
             'wrap_path': self.get_path_to_file(self.wrap_fk),
             'description': self.description,
             'genre': self.genre,
+            'price': self.price
+        }
+
+    def to_dict_for_cart(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'title-en': self.title_en,
+            'wrap_path': self.get_path_to_file(self.wrap_fk),
             'price': self.price
         }

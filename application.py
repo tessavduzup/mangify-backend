@@ -9,7 +9,7 @@ CORS(app)
 
 # Для работы кириллицы
 app.json.ensure_ascii = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///mangify.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:seregasuper12@localhost/mungify'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
