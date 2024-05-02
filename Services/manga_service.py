@@ -1,8 +1,8 @@
+from Models.Genre import Genre
 from Models.Manga import Manga
 from Models.Image import Image
-from application import db, UPLOAD_FOLDER
+from application import db
 from sqlalchemy import func
-import os
 
 
 class MangaService:
@@ -37,16 +37,20 @@ class MangaService:
 
     def add_manga(self, request_data):
         """По данным запроса добавляет новую мангу в БД"""
-        wrap = request_data['wrap']
-
-        new_wrap = Image(path_to_file=wrap)
+        new_wrap = Image(wrap_path=request_data['wrap_path'])
 
         db.session.add(new_wrap)
         db.session.flush()
 
+        genres = request_data['genre']
+        genres_id = []
+        for genre in genres:
+            genre_row = Genre.query.filter_by(genre_name=genre).first()
+            genres_id.append(genre_row.id)
+
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
-                          wrap_fk=new_wrap.id,
-                          description=request_data['description'], genre=request_data['genre'],
+                          title_en=request_data['title-en'], wrap_fk=new_wrap.id,
+                          description=request_data['description'], genre=genres_id,
                           price=request_data['price'])
 
         db.session.add(new_manga)
@@ -63,5 +67,41 @@ class MangaService:
         manga = Manga.query.filter_by(id=manga_id).first()
         for key in request_data:
             setattr(manga, key, request_data[key])
+
+        db.session.commit()
+
+    def delete_all_manga(self):
+        manga = Manga.query.all()
+        for i in range(len(manga)):
+            db.session.delete(manga[i])
+
+        db.session.flush()
+
+        images = Image.query.all()
+        for i in range(len(images)):
+            db.session.delete(images[i])
+
+        db.session.commit()
+
+    def fill_up_manga_table(self, request_data):
+        for row in request_data:
+            new_wrap = Image(wrap_path=row['wrap_path'])
+
+            db.session.add(new_wrap)
+            db.session.flush()
+
+            genres = row['genre']
+            genres_id = []
+            for genre in genres:
+                genre_row = Genre.query.filter_by(genre_name=genre).first()
+                genres_id.append(genre_row.id)
+
+            new_manga = Manga(author=row['author'], title=row['title'],
+                              title_en=row['title-en'], wrap_fk=new_wrap.id,
+                              description=row['description'], genre=genres_id,
+                              price=row['price'])
+
+            db.session.add(new_manga)
+            db.session.commit()
 
         db.session.commit()

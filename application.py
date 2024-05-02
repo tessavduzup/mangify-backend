@@ -9,8 +9,7 @@ CORS(app)
 
 # Для работы кириллицы
 app.json.ensure_ascii = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mangify.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///mangify.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app)
-UPLOAD_FOLDER = 'images'

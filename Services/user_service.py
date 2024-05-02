@@ -1,10 +1,19 @@
+from flask import jsonify
+from Models.UserManga import UserManga
 from Models.Users import Users
 from application import db
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class UserService:
     """Класс, описывающий работу с таблицей пользователей в БД"""
+
+    def auth(self, request_data):
+        user = Users.query.filter_by(request_data['username']).first()
+        if user and check_password_hash(user['psw'], request_data['psw']):
+            return jsonify({"success": "Успешный вход!"})
+        else:
+            return jsonify({"error": "Неверный логин или пароль"})
 
     def find_user(self, user_id):
         """Находит пользователя по ID
@@ -24,8 +33,13 @@ class UserService:
 
     def add_user(self, request_data):
         """Добавляет нового пользователя в БД"""
-        new_user = Users(username=request_data["username"], email=request_data["email"],
-                        psw=generate_password_hash(request_data["psw"]))
+        new_usermanga = UserManga()
+        db.session.add(new_usermanga)
+        db.session.flush()
+
+        new_user = Users(username=request_data["username"], psw=generate_password_hash(request_data["psw"]),
+                         user_manga_fk=new_usermanga.id, is_admin=False)  # Система ролей?
+
         db.session.add(new_user)
         db.session.commit()
 
@@ -40,5 +54,22 @@ class UserService:
         user = Users.query.filter_by(id=user_id).first()
         for key in request_data:
             setattr(user, key, request_data[key])
+
+        db.session.commit()
+
+    def delete_all_users(self):
+        users = Users.query.all()
+        for i in range(len(users)):
+            db.session.delete(users[i])
+
+        db.session.commit()
+
+    def fill_up_users_table(self, request_data):
+        for row in request_data:
+            new_user = Users(username=row["username"], email=row["email"],
+                             psw=generate_password_hash(row["psw"]))
+
+            db.session.add(new_user)
+            db.session.flush()
 
         db.session.commit()
