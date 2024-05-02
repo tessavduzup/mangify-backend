@@ -2,18 +2,22 @@
 
 ## Technologies
 
-- Flask
-- Sqlalchemy
-- Sqlite3
+-   Flask
+-   Sqlalchemy
+-   Sqlite3
 
 ## Run backend
 
 ```shell
-cd ./mangify-backend
+python -m venv .venv
 ```
 
 ```shell
 .venv/Scripts/activate
+```
+
+```shell
+pip install -r requirements.txt
 ```
 
 ```shell
