@@ -1,8 +1,9 @@
-from Models.Genre import Genre
-from Models.Manga import Manga
-from Models.Image import Image
-from application import db
 from sqlalchemy import func
+
+from application import db
+from Models.Genre import Genre
+from Models.Image import Image
+from Models.Manga import Manga
 
 
 class MangaService:
