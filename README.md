@@ -1,10 +1,12 @@
-# Technologies
+# Mangify Backend
+
+## Technologies
 
     Flask
     Sqlalchemy
     Sqlite3
 
-# Run backend
+## Run backend
 
 ```shell
 cd ./mangify-backend
