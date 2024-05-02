@@ -2,9 +2,9 @@
 
 ## Technologies
 
-    Flask
-    Sqlalchemy
-    Sqlite3
+- Flask
+- Sqlalchemy
+- Sqlite3
 
 ## Run backend
 
