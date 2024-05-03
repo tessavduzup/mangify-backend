@@ -8,18 +8,22 @@
 
 ## Run backend
 
-```shell
-python -m venv .venv
-```
+1. Setup virtual environment:
 
-```shell
-.venv/Scripts/activate
-```
+    ```shell
+    python -m venv .venv
+    ```
 
-```shell
-pip install -r requirements.txt
-```
+    ```shell
+    .venv/Scripts/activate
+    ```
 
-```shell
-python main.py
-```
+    ```shell
+    pip install -r requirements.txt
+    ```
+
+2. Run server:
+
+    ```shell
+    python main.py
+    ```
