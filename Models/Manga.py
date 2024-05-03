@@ -10,7 +10,7 @@ class Manga(db.Model):
     author = db.Column(db.String, nullable=True)
     wrap_fk = db.Column(db.Integer, db.ForeignKey('image.id'), nullable=True)
     description = db.Column(db.Text, nullable=True)
-    genre = db.Column(ARRAY(db.Integer), nullable=True)
+    genre = db.Column(db.JSON, nullable=True)
     price = db.Column(db.Integer, nullable=True)
 
     @staticmethod

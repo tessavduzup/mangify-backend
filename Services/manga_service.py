@@ -51,7 +51,7 @@ class MangaService:
 
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
-                          description=request_data['description'], genre=genres_id,
+                          description=request_data['description'], genre={"genres": genres_id},
                           price=request_data['price'])
 
         db.session.add(new_manga)
