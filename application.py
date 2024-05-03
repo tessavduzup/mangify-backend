@@ -8,6 +8,6 @@ api = Api(app)
 CORS(app, supports_credentials=True, expose_headers="Content-Type", allow_headers="Content-Type")
 
 app.json.ensure_ascii = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://postgres:postgres@213.80.187.139/mangify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mangify.db'	
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
