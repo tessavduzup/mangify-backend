@@ -46,7 +46,13 @@ class MangaService:
         genres_id = []
         for genre in genres:
             genre_row = Genre.query.filter_by(genre_name=genre).first()
-            genres_id.append(genre_row.id)
+            if genre_row:
+                genres_id.append(genre_row.id)
+            else:
+                new_genre = Genre(genre_name=genre)
+                db.session.add(new_genre)
+                db.session.commit()
+                genres_id.append(new_genre.id)
 
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
@@ -94,7 +100,13 @@ class MangaService:
             genres_id = []
             for genre in genres:
                 genre_row = Genre.query.filter_by(genre_name=genre).first()
-                genres_id.append(genre_row.id)
+                if genre_row:
+                    genres_id.append(genre_row.id)
+                else:
+                    new_genre = Genre(genre_name=genre)
+                    db.session.add(new_genre)
+                    db.session.commit()
+                    genres_id.append(new_genre.id)
 
             new_manga = Manga(author=row['author'], title=row['title'],
                               title_en=row['title-en'], wrap_fk=new_wrap.id,
@@ -103,5 +115,3 @@ class MangaService:
 
             db.session.add(new_manga)
             db.session.commit()
-
-        db.session.commit()

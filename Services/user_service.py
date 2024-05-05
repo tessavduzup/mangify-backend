@@ -29,7 +29,7 @@ class UserService:
             user = row.to_dict()
             all_users.append(user)
 
-        return raw_users_list
+        return all_users
 
     def add_user(self, request_data):
         """Добавляет нового пользователя в БД"""
