@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 api = Api(app)
-CORS(app, supports_credentials=True, expose_headers="Content-Type", allow_headers="Content-Type")
+CORS(app)
 
 app.json.ensure_ascii = False
 
