@@ -9,9 +9,9 @@ class UserService:
     """Класс, описывающий работу с таблицей пользователей в БД"""
 
     def auth(self, request_data):
-        user = Users.query.filter_by(request_data['username']).first()
-        if user and check_password_hash(user['psw'], request_data['psw']):
-            return jsonify({"success": "Успешный вход!"})
+        user = Users.query.filter_by(username=request_data['username']).first()
+        if user and check_password_hash(user.psw, request_data['psw']):
+            return jsonify({"Success! User ID": user.id})
         else:
             return jsonify({"error": "Неверный логин или пароль"})
 
@@ -55,6 +55,74 @@ class UserService:
         for key in request_data:
             setattr(user, key, request_data[key])
 
+        db.session.commit()
+
+    def add_to_cart(self, user_id, manga_id):
+        usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+
+        usermanga_id = usermanga.id
+        usermanga_cart = usermanga.cart
+        usermanga_fm = usermanga.favourite_manga
+        usermanga_pm = usermanga.purchased_manga
+
+        usermanga_cart['cart'].append(manga_id)
+
+        new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+        db.session.delete(usermanga)
+        db.session.add(new_usermanga)
+        db.session.commit()
+
+    def add_to_favourite(self, user_id, manga_id):
+        usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+
+        usermanga_id = usermanga.id
+        usermanga_cart = usermanga.cart
+        usermanga_fm = usermanga.favourite_manga
+        usermanga_pm = usermanga.purchased_manga
+
+        usermanga_fm['favourite_manga'].append(manga_id)
+
+        new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+        db.session.delete(usermanga)
+        db.session.add(new_usermanga)
+        db.session.commit()
+
+    def delete_from_cart(self, user_id, manga_id):
+        usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+
+        usermanga_id = usermanga.id
+        usermanga_cart = usermanga.cart
+        usermanga_fm = usermanga.favourite_manga
+        usermanga_pm = usermanga.purchased_manga
+
+        usermanga_cart['cart'].remove(manga_id)
+
+        new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+        db.session.delete(usermanga)
+        db.session.add(new_usermanga)
+        db.session.commit()
+
+    def delete_from_favourite(self, user_id, manga_id):
+        usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+
+        usermanga_id = usermanga.id
+        usermanga_cart = usermanga.cart
+        usermanga_fm = usermanga.favourite_manga
+        usermanga_pm = usermanga.purchased_manga
+
+        usermanga_fm['favourite_manga'].remove(manga_id)
+
+        new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+        db.session.delete(usermanga)
+        db.session.add(new_usermanga)
         db.session.commit()
 
     def delete_all_users(self):

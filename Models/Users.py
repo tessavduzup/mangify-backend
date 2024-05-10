@@ -1,4 +1,3 @@
-from Models.Manga import Manga
 from Models.UserManga import UserManga
 from application import db
 

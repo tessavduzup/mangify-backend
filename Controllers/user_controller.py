@@ -54,6 +54,42 @@ class UserController(Resource):
         return jsonify(user_id)
 
     @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/add_to_cart", methods=["POST"])
+    def add_to_cart(user_id):
+        request_data = request.get_json()
+        manga_id = request_data['manga_id']
+        _user_service.add_to_cart(user_id, manga_id)
+
+        return jsonify(_user_service.find_user(user_id))
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/delete_from_cart", methods=["DELETE"])
+    def delete_from_cart(user_id):
+        request_data = request.get_json()
+        manga_id = request_data['manga_id']
+        _user_service.delete_from_cart(user_id, manga_id)
+
+        return jsonify(_user_service.find_user(user_id))
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/add_to_favourite_manga", methods=["POST"])
+    def add_to_favourite(user_id):
+        request_data = request.get_json()
+        manga_id = request_data['manga_id']
+        _user_service.add_to_favourite(user_id, manga_id)
+
+        return jsonify(_user_service.find_user(user_id))
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/delete_from_favourite_manga", methods=["DELETE"])
+    def delete_from_favourite(user_id):
+        request_data = request.get_json()
+        manga_id = request_data['manga_id']
+        _user_service.delete_from_favourite(user_id, manga_id)
+
+        return jsonify(_user_service.find_user(user_id))
+
+    @staticmethod
     @app.route("/api/v1/delete_all_users", methods=["DELETE"])
     def delete_all_users():
         _user_service.delete_all_users()
@@ -68,16 +104,16 @@ class UserController(Resource):
         return jsonify({"all_manga": _user_service.find_all_users()})
 
     # @staticmethod
-    # @app.route("/api/v1/cart/<int:user_id>", methods=["GET"])
+    # @app.route("/api/v1/user/<int:user_id>/cart", methods=["GET"])
     # def get_cart(user_id):
     #     return jsonify({"cart": _user_service.get_cart(user_id)})
     #
     # @staticmethod
-    # @app.route("/api/v1/favourite_manga/<int:user_id>", methods=["GET"])
+    # @app.route("/api/v1/user/<int:user_id>/favourite_manga", methods=["GET"])
     # def get_favourite_manga(user_id):
     #     return jsonify({"favourite_manga": _user_service.get_favourite_manga(user_id)})
     #
     # @staticmethod
-    # @app.route("/api/v1/purchased_manga/<int:user_id>", methods=["GET"])
+    # @app.route("/api/v1/user/<int:user_id>/purchased_manga", methods=["GET"])
     # def get_purchased_manga(user_id):
     #     return jsonify({"purchased_manga": _user_service.get_purchased_manga(user_id)})

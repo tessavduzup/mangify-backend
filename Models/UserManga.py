@@ -1,4 +1,5 @@
 from application import db
+from sqlalchemy_json import MutableJson
 
 
 class UserManga(db.Model):
