@@ -1,5 +1,4 @@
 from sqlalchemy import func
-
 from application import db
 from Models.Genre import Genre
 from Models.Image import Image
@@ -48,12 +47,12 @@ class MangaService:
         for genre in genres:
             genre_row = Genre.query.filter_by(genre_name=genre).first()
             if genre_row:
-                genres_id.append(genre_row.id)
+                genres_id.append(genre_row.genre_name)
             else:
                 new_genre = Genre(genre_name=genre)
                 db.session.add(new_genre)
                 db.session.commit()
-                genres_id.append(new_genre.id)
+                genres_id.append(new_genre.genre_name)
 
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
