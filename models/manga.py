@@ -1,5 +1,4 @@
-from sqlalchemy.dialects.postgresql import ARRAY
-from Models.Image import Image
+from models.image import Image
 from application import db
 
 

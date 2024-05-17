@@ -1,7 +1,7 @@
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from flask_restful import Resource
 from application import app
-from Payment.Services.wallet_service import WalletService
+from payment import WalletService, WalletDuplicateError
 
 
 _wallet_service = WalletService()
@@ -23,7 +23,12 @@ class WalletController(Resource):
     @staticmethod
     @app.route("/api/v1/wallets", methods=["POST"])
     def add_wallet():
-        request_data = request.get_json()
-        _wallet_service.add_wallet(request_data)
+        try:
+            request_data = request.get_json()
+            _wallet_service.add_wallet(request_data)
 
-        return jsonify({"wallets": _wallet_service.find_all_wallets()})
+            return jsonify({"wallets": _wallet_service.find_all_wallets()})
+        except WalletDuplicateError as ex:
+            return Response(ex.msg, status=409)
+        except Exception as ex:
+            return Response(f"Непредвиденная ошибка: {ex}", status=500)

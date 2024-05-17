@@ -1,6 +1,7 @@
 from flask import jsonify
-from Models.UserManga import UserManga
-from Models.Users import Users
+
+from exceptions import UsernameDuplicateError, UserNotFoundError, MangaDuplicateError, MangaNotFoundError
+from models import Users, UserManga
 from application import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -8,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class UserService:
     """Класс, описывающий работу с таблицей пользователей в БД"""
 
-    def auth(self, request_data):
+    def auth(self, request_data):  # TODO
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
             return jsonify({"Success! User ID": user.id})
@@ -19,6 +20,9 @@ class UserService:
         """Находит пользователя по ID
         в БД и возвращает его в виде словаря"""
         user = Users.query.filter_by(id=user_id).first()
+        if user is None:
+            raise UserNotFoundError("Пользователь не найден")
+
         return user.to_dict()
 
     def find_all_users(self):
@@ -33,6 +37,10 @@ class UserService:
 
     def add_user(self, request_data):
         """Добавляет нового пользователя в БД"""
+        user_check = Users.query.filter_by(username=request_data["username"]).first()
+        if user_check:
+            raise UsernameDuplicateError("Пользователь с таким именем уже существует")
+
         new_usermanga = UserManga()
         db.session.add(new_usermanga)
         db.session.flush()
@@ -46,12 +54,22 @@ class UserService:
     def delete_user(self, user_id: int):
         """Находит в БД пользователя по ID и удаляет его"""
         user_to_delete = Users.query.filter_by(id=user_id).first()
+        if not user_to_delete:
+            raise UserNotFoundError("Пользователь не найден")
+
         db.session.delete(user_to_delete)
         db.session.commit()
 
     def update_user(self, user_id, request_data):
         """Находит в БД пользователя по ID и обновляет его данные"""
         user = Users.query.filter_by(id=user_id).first()
+        if not user:
+            raise UserNotFoundError("Пользователь не найден")
+
+        user_check = Users.query.filter_by(username=request_data["username"]).first()
+        if user_check:
+            raise UsernameDuplicateError("Пользователь с таким именем уже существует")
+
         for key in request_data:
             setattr(user, key, request_data[key])
 
@@ -59,6 +77,8 @@ class UserService:
 
     def add_to_cart(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+        if manga_id in usermanga.cart:
+            raise MangaDuplicateError("Эта манга уже в корзине")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
@@ -76,6 +96,8 @@ class UserService:
 
     def add_to_favourite(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+        if manga_id in usermanga.favourite_manga:
+            raise MangaDuplicateError("Эта манга уже в избранном")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
@@ -93,6 +115,8 @@ class UserService:
 
     def delete_from_cart(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+        if manga_id not in usermanga.cart:
+            raise MangaNotFoundError("В корзине нет этой манги")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
@@ -110,6 +134,8 @@ class UserService:
 
     def delete_from_favourite(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+        if manga_id not in usermanga.favourite_manga:
+            raise MangaNotFoundError("В избранном нет этой манги")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart

@@ -1,8 +1,7 @@
 from sqlalchemy import func
+from exceptions import MangaNotFoundError, MangaDuplicateError, GenreNotFoundError
 from application import db
-from Models.Genre import Genre
-from Models.Image import Image
-from Models.Manga import Manga
+from models import Genre, Manga, Image
 
 
 class MangaService:
@@ -12,6 +11,9 @@ class MangaService:
         """Находит мангу по ID
         в БД и возвращает его в виде словаря"""
         manga = Manga.query.filter_by(id=manga_id).first()
+        if manga is None:
+            raise MangaNotFoundError("Манга не найдена")
+
         return manga.to_dict()
 
     def find_all_manga(self):
@@ -49,10 +51,11 @@ class MangaService:
             if genre_row:
                 genres_id.append(genre_row.genre_name)
             else:
-                new_genre = Genre(genre_name=genre)
-                db.session.add(new_genre)
-                db.session.commit()
-                genres_id.append(new_genre.genre_name)
+                raise GenreNotFoundError("Жанр не найден")
+
+        title_check = Manga.query.filter_by(title=request_data['title']).first()
+        if title_check:
+            raise MangaDuplicateError(f"Манга '{request_data['title']}' уже существует")
 
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
@@ -65,12 +68,18 @@ class MangaService:
     def delete_manga(self, manga_id: int):
         """Находит в БД мангу по ID и удаляет её"""
         manga_to_delete = Manga.query.filter_by(id=manga_id).first()
+        if manga_to_delete is None:
+            raise MangaNotFoundError("Манга не найдена")
+
         db.session.delete(manga_to_delete)
         db.session.commit()
 
     def update_manga(self, manga_id, request_data):
         """Находит в БД мангу по ID и обновляет её данные"""
         manga = Manga.query.filter_by(id=manga_id).first()
+        if manga is None:
+            raise MangaNotFoundError("Манга не найдена")
+
         for key in request_data:
             setattr(manga, key, request_data[key])
 

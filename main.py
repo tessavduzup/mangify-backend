@@ -1,8 +1,6 @@
 from application import app, api
-from Controllers.genre_controller import GenreController
-from Controllers.user_controller import UserController
-from Controllers.manga_controller import MangaController
-from Payment.Controllers.wallet_controller import WalletController
+from controllers import GenreController, UserController, MangaController
+from payment import WalletController
 
 if __name__ == '__main__':
     api.add_resource(GenreController)

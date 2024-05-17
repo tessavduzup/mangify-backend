@@ -1,4 +1,4 @@
-from Models.UserManga import UserManga
+from models.user_manga import UserManga
 from application import db
 
 

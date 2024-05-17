@@ -1,7 +1,6 @@
 from flask import jsonify
-from Payment.Models.Wallet import Wallet
-from Models.Users import Users
-from Models.UserManga import UserManga
+from payment import Wallet, WalletDuplicateError
+from models import Users, UserManga
 from application import db
 
 
@@ -11,7 +10,7 @@ class WalletService:
         wallet = Wallet.query.filter_by(card_number=request_data['card_number']).first()
 
         if wallet.money_amount < request_data['amount_of_buying']:
-            return jsonify({"error": "Недостаточно средств на карте"})
+            return jsonify({"error": "No money - no honey"})
         else:
             wallet.money_amount -= request_data['amount_of_buying']
             db.session.flush()
@@ -31,6 +30,10 @@ class WalletService:
         return wallets
 
     def add_wallet(self, request_data):
+        wallet_check = Wallet.query.filter_by(card_number=request_data['card_number']).first()
+        if wallet_check:
+            raise WalletDuplicateError("Кошелёк с такой картой уже существует")
+
         new_wallet = Wallet(card_number=request_data['card_number'], money_amount=request_data['money_amount'])
         db.session.add(new_wallet)
         db.session.commit()
