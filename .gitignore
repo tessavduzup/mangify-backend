@@ -2,6 +2,6 @@ config.py
 /venv
 /.venv
 /.vscode
-/.idea
+.idea
 *.pyc
 */__pycache__
