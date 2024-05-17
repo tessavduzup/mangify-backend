@@ -1,7 +1,7 @@
 from flask import jsonify, request, Response
 from flask_restful import Resource
 from application import app
-from payment import WalletService, WalletDuplicateError
+from Payment import WalletService, WalletDuplicateError
 
 
 _wallet_service = WalletService()

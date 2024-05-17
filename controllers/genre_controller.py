@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from exceptions import GenreNotFoundError, GenreDuplicateError
 from application import app
-from services.genre_service import GenreService
+from Services.genre_service import GenreService
 
 
 _genre_service = GenreService()

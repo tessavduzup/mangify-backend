@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from exceptions import MangaNotFoundError, MangaDuplicateError
 from application import app
-from services.manga_service import MangaService
+from Services.manga_service import MangaService
 
 
 _manga_service = MangaService()

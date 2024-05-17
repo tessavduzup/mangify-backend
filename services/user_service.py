@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from exceptions import UsernameDuplicateError, UserNotFoundError, MangaDuplicateError, MangaNotFoundError
-from models import Users, UserManga
+from Models import Users, UserManga
 from application import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
