@@ -1,9 +1,8 @@
 from flask import jsonify
-
+from werkzeug.security import check_password_hash, generate_password_hash
 from exceptions import UsernameDuplicateError, UserNotFoundError, MangaDuplicateError, MangaNotFoundError
 from models import Users, UserManga
 from application import db
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class UserService:
@@ -12,7 +11,7 @@ class UserService:
     def auth(self, request_data):  # TODO
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
-            return jsonify({"Success! User ID": user.id})
+            return jsonify({"id": user.id})
         else:
             return jsonify({"error": "Неверный логин или пароль"})
 
