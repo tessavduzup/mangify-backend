@@ -3,7 +3,7 @@ from flask_restful import Resource
 
 from exceptions import UserNotFoundError, UsernameDuplicateError, MangaDuplicateError, MangaNotFoundError
 from application import app
-from Services.user_service import UserService
+from services import UserService
 
 
 _user_service = UserService()

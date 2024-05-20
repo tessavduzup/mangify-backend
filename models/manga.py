@@ -1,4 +1,4 @@
-from Models.image import Image
+from models import Image
 from application import db
 
 

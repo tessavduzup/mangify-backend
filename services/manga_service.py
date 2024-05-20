@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from exceptions import MangaNotFoundError, MangaDuplicateError, GenreNotFoundError
 from application import db
-from Models import Genre, Manga, Image
+from models import Genre, Manga, Image
 
 
 class MangaService:
@@ -45,11 +45,11 @@ class MangaService:
         db.session.flush()
 
         genres = request_data['genre']
-        genres_id = []
+        genres_name = []
         for genre in genres:
             genre_row = Genre.query.filter_by(genre_name=genre).first()
             if genre_row:
-                genres_id.append(genre_row.genre_name)
+                genres_name.append(genre_row.genre_name)
             else:
                 raise GenreNotFoundError("Жанр не найден")
 
@@ -59,7 +59,7 @@ class MangaService:
 
         new_manga = Manga(author=request_data['author'], title=request_data['title'],
                           title_en=request_data['title-en'], wrap_fk=new_wrap.id,
-                          description=request_data['description'], genre={"genres": genres_id},
+                          description=request_data['description'], genre={"genres": genres_name},
                           price=request_data['price'])
 
         db.session.add(new_manga)
@@ -106,20 +106,20 @@ class MangaService:
             db.session.flush()
 
             genres = row['genre']
-            genres_id = []
+            genres_name = []
             for genre in genres:
                 genre_row = Genre.query.filter_by(genre_name=genre).first()
                 if genre_row:
-                    genres_id.append(genre_row.id)
+                    genres_name.append(genre_row.genre_name)
                 else:
                     new_genre = Genre(genre_name=genre)
                     db.session.add(new_genre)
                     db.session.commit()
-                    genres_id.append(new_genre.id)
+                    genres_name.append(new_genre.id)
 
             new_manga = Manga(author=row['author'], title=row['title'],
                               title_en=row['title-en'], wrap_fk=new_wrap.id,
-                              description=row['description'], genre=genres_id,
+                              description=row['description'], genre=genres_name,
                               price=row['price'])
 
             db.session.add(new_manga)

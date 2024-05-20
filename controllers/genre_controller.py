@@ -1,9 +1,8 @@
 from flask import jsonify, request, Response
 from flask_restful import Resource
-
 from exceptions import GenreNotFoundError, GenreDuplicateError
 from application import app
-from Services.genre_service import GenreService
+from services import GenreService
 
 
 _genre_service = GenreService()

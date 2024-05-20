@@ -1,6 +1,6 @@
 from flask import jsonify
-from Payment import Wallet, WalletDuplicateError
-from Models import Users, UserManga
+from payment import Wallet, WalletDuplicateError
+from models import Users, UserManga
 from application import db
 
 
