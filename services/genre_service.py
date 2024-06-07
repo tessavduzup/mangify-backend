@@ -6,10 +6,10 @@ from application import db
 class GenreService:
     """Класс, описывающий работу с таблицей для жанров манги в БД"""
 
-    def find_genre(self, genre_name):
+    def find_genre(self, genre_id):
         """Находит жанр по ID
         в БД и возвращает его в виде словаря"""
-        genre = Genre.query.filter_by(genre_name=genre_name).first()
+        genre = Genre.query.filter_by(id=genre_id).first()
         if genre is None:
             raise GenreNotFoundError("Такой жанр не найден")
 

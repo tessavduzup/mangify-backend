@@ -1,19 +1,16 @@
+import random
 from flask import jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
-from exceptions import UsernameDuplicateError, UserNotFoundError, MangaDuplicateError, MangaNotFoundError
+from exceptions import (UsernameDuplicateError, UserNotFoundError,
+                        MangaDuplicateError, MangaNotFoundError, EmailDuplicateError)
 from models import Users, UserManga
 from application import db
+from utils.email_utils import confirm_registration
+from application import redis_client
 
 
 class UserService:
     """Класс, описывающий работу с таблицей пользователей в БД"""
-
-    def auth(self, request_data):  # TODO
-        user = Users.query.filter_by(username=request_data['username']).first()
-        if user and check_password_hash(user.psw, request_data['psw']):
-            return jsonify({"id": user.id})
-        else:
-            return jsonify({"error": "Неверный логин или пароль"})
 
     def find_user(self, user_id):
         """Находит пользователя по ID
@@ -40,15 +37,25 @@ class UserService:
         if user_check:
             raise UsernameDuplicateError("Пользователь с таким именем уже существует")
 
+        user_email_check = Users.query.filter_by(email=request_data["email"]).first()
+        if user_email_check:
+            raise EmailDuplicateError("Почта занята")
+
         new_usermanga = UserManga()
         db.session.add(new_usermanga)
         db.session.flush()
 
         new_user = Users(username=request_data["username"], psw=generate_password_hash(request_data["psw"]),
-                         user_manga_fk=new_usermanga.id, is_admin=False)  # Система ролей?
+                         email=request_data['email'], user_manga_fk=new_usermanga.id, is_admin=False)
 
         db.session.add(new_user)
         db.session.commit()
+
+        code = random.randint(100000, 999999)
+        confirm_registration(new_user.email, request_data["username"], code)
+
+        redis_client.set(new_user.username, code)
+        redis_client.close()
 
     def delete_user(self, user_id: int):
         """Находит в БД пользователя по ID и удаляет его"""
@@ -149,6 +156,22 @@ class UserService:
         db.session.delete(usermanga)
         db.session.add(new_usermanga)
         db.session.commit()
+
+    def email_confirmation(self, request_data):
+        if request_data['confirm_code'] == redis_client.get(request_data['username']):
+            redis_client.delete(request_data['username'])
+            redis_client.close()
+            return {"success": "Почта подтверждена!"}
+        else:
+            redis_client.close()
+            return {"error": "Неверный код!"}
+
+    def auth(self, request_data):  # TODO
+        user = Users.query.filter_by(username=request_data['username']).first()
+        if user and check_password_hash(user.psw, request_data['psw']):
+            return jsonify({"id": user.id})
+        else:
+            return jsonify({"error": "Неверный логин или пароль"})
 
     def delete_all_users(self):
         users = Users.query.all()

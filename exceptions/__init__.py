@@ -4,3 +4,4 @@ from .manga_duplicate_error import MangaDuplicateError
 from .manga_not_found_error import MangaNotFoundError
 from .username_duplicate_error import UsernameDuplicateError
 from .user_not_found_error import UserNotFoundError
+from .email_duplicate_error import EmailDuplicateError

@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "username": {"type": "string"},
+    "email": {"type": "string"},
+    "psw": {"type": "string"}
+  },
+  "required": ["genre_name", "email", "psw"],
+  "additionalProperties": false
+}

@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "card_number": {"type": "string"},
+    "money_amount": {"type": "number"}
+  },
+  "required": ["card_number", "money_amount"],
+  "additionalProperties": false
+}

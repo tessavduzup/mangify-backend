@@ -27,6 +27,16 @@ class MangaService:
 
         return all_manga
 
+    def find_similar_manga(self, manga_id):
+        main_manga = Manga.query.filter_by(id=manga_id).first()
+        manga_genres = main_manga.genre
+
+        similar_manga = Manga.query.filter_by(genre=manga_genres).all()
+
+        return similar_manga
+
+
+
     def find_top_manga(self):
         """Возвращает список популярной манги"""
         top_manga = []
@@ -39,7 +49,7 @@ class MangaService:
 
     def add_manga(self, request_data):
         """По данным запроса добавляет новую мангу в БД"""
-        new_wrap = Image(wrap_path=request_data['wrap_path'])
+        new_wrap = Image(wrap_path=request_data['wrap_path'])  # TODO
 
         db.session.add(new_wrap)
         db.session.flush()

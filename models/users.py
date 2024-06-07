@@ -5,6 +5,7 @@ from application import db
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, nullable=True, unique=True)
+    email = db.Column(db.String, nullable=True, unique=True)
     psw = db.Column(db.String, nullable=True)
     user_manga_fk = db.Column(db.Integer, db.ForeignKey('user_manga.id'), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=True)
@@ -14,6 +15,7 @@ class Users(db.Model):
         return {
             'id': self.id,
             'username': self.username,
+            "email": self.email,
             'cart': user_manga.cart["cart"],
             'favourite_manga': user_manga.favourite_manga["favourite_manga"],
             'purchased_manga': user_manga.purchased_manga["purchased_manga"],

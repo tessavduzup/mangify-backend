@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "author": {"type": "string"},
+    "title": {"type": "string"},
+    "title_en": {"type": "string"},
+    "description": {"type": "string"},
+    "genre": {
+      "type": "array",
+      "items": {"type":  "string"}
+    },
+    "price": {"type": "number"},
+    "wrap_path": {"type": "string"}
+  },
+  "additionalProperties": false
+}

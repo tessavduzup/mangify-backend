@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "user_id": {"type": "number"},
+    "amount_of_buying": {"type": "number"},
+    "card_number": {"type": "string"},
+    "goods": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "required": ["user_id", "amount_of_buying", "card_number", "goods"],
+  "additionalProperties": false
+}

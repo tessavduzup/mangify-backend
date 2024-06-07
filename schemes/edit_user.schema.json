@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "username": {"type": "string"},
+    "email": {"type": "string"},
+    "psw": {"type": "string"}
+  },
+  "additionalProperties": false
+}

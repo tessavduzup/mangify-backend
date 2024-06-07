@@ -1,7 +1,8 @@
-from flask import jsonify
+import datetime
 from payment import Wallet, WalletDuplicateError
-from models import Users, UserManga
+from models import Users, UserManga, Orders
 from application import db
+from utils.email_utils import send_cheque
 
 
 class WalletService:
@@ -10,15 +11,27 @@ class WalletService:
         wallet = Wallet.query.filter_by(card_number=request_data['card_number']).first()
 
         if wallet.money_amount < request_data['amount_of_buying']:
-            return jsonify({"error": "No money - no honey"})
+            return {"error": "No money - no honey"}
         else:
             wallet.money_amount -= request_data['amount_of_buying']
             db.session.flush()
 
             usermanga.purchased_manga = usermanga.cart
             usermanga.cart = []
+            db.session.flush()
+
+            order_code = f"WEB-ORDER-{request_data['user_id']}{request_data['amount_of_buying']}"
+            new_order = Orders(order_code=order_code, order_sum=request_data['amount_of_buying'],
+                               client=request_data['user_id'], buying_content={"buying_content": request_data['goods']})
+
+            db.session.add(new_order)
             db.session.commit()
-            return jsonify({"success": "Оплата прошла успешно"})
+
+            send_cheque(usermanga.email, order_code, request_data['amount_of_buying'],
+                        request_data['card_number'][-4:], request_data['goods'],
+                        datetime.datetime.now().replace(microsecond=0))
+
+            return {"success": "Оплата прошла успешно"}
 
     def find_all_wallets(self):
         wallets = []

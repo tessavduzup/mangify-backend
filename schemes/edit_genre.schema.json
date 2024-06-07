@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "properties": {
+    "genre_name": {"type": "string"}
+  },
+  "additionalProperties": false
+}
