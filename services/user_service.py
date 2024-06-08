@@ -121,7 +121,7 @@ class UserService:
 
     def delete_from_cart(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
-        if manga_id not in usermanga.cart:
+        if manga_id not in usermanga.cart['cart']:
             raise MangaNotFoundError("В корзине нет этой манги")
 
         usermanga_id = usermanga.id
@@ -140,7 +140,7 @@ class UserService:
 
     def delete_from_favourite(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
-        if manga_id not in usermanga.favourite_manga:
+        if manga_id not in usermanga.favourite_manga['favourite_manga']:
             raise MangaNotFoundError("В избранном нет этой манги")
 
         usermanga_id = usermanga.id
@@ -169,9 +169,18 @@ class UserService:
     def auth(self, request_data):  # TODO
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
-            return jsonify({"id": user.id})
+            return {"id": user.id}
         else:
-            return jsonify({"error": "Неверный логин или пароль"})
+            return {"error": "Неверный логин или пароль"}
+
+    def get_cart(self, user_id):
+        usermanga = UserManga.query.filter_by(id=user_id).first()
+
+        return usermanga.cart
+
+
+
+
 
     def delete_all_users(self):
         users = Users.query.all()

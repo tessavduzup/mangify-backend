@@ -5,6 +5,6 @@
     "email": {"type": "string"},
     "psw": {"type": "string"}
   },
-  "required": ["genre_name", "email", "psw"],
+  "required": ["username", "email", "psw"],
   "additionalProperties": false
 }

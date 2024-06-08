@@ -192,7 +192,7 @@ class UserController(Resource):
             manga_id = request_data['manga_id']
             _user_service.delete_from_favourite(user_id, manga_id)
 
-            return _user_service.find_user(user_id)
+            return jsonify(_user_service.find_user(user_id))
         except MangaNotFoundError as ex:
             users_logger.error("MangaNotFoundError")
 
@@ -206,7 +206,7 @@ class UserController(Resource):
     @app.route("/api/v1/delete_all_users", methods=["DELETE"])
     def delete_all_users():
         _user_service.delete_all_users()
-        return {"all_manga": _user_service.find_all_users()}
+        return {"all_users": _user_service.find_all_users()}
 
     @staticmethod
     @app.route("/api/v1/fill_up_users_table", methods=["POST"])
@@ -216,17 +216,17 @@ class UserController(Resource):
 
         return {"all_manga": _user_service.find_all_users()}
 
-    # @staticmethod
-    # @app.route("/api/v1/user/<int:user_id>/cart", methods=["GET"])
-    # def get_cart(user_id):
-    #     return jsonify({"cart": _user_service.get_cart(user_id)})
-    #
-    # @staticmethod
-    # @app.route("/api/v1/user/<int:user_id>/favourite_manga", methods=["GET"])
-    # def get_favourite_manga(user_id):
-    #     return jsonify({"favourite_manga": _user_service.get_favourite_manga(user_id)})
-    #
-    # @staticmethod
-    # @app.route("/api/v1/user/<int:user_id>/purchased_manga", methods=["GET"])
-    # def get_purchased_manga(user_id):
-    #     return jsonify({"purchased_manga": _user_service.get_purchased_manga(user_id)})
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/cart", methods=["GET"])
+    def get_cart(user_id):
+        return {"cart": _user_service.get_cart(user_id)}
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/favourite_manga", methods=["GET"])
+    def get_favourite_manga(user_id):
+        return {"favourite_manga": _user_service.get_favourite_manga(user_id)}
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/purchased_manga", methods=["GET"])
+    def get_purchased_manga(user_id):
+        return {"purchased_manga": _user_service.get_purchased_manga(user_id)}

@@ -29,8 +29,10 @@ class MangaService:
 
     def find_similar_manga(self, manga_id):
         main_manga = Manga.query.filter_by(id=manga_id).first()
-        manga_genres = main_manga.genre
+        if not main_manga:
+            raise MangaNotFoundError
 
+        manga_genres = main_manga.genre
         similar_manga = Manga.query.filter_by(genre=manga_genres).all()
 
         return similar_manga
