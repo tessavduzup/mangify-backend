@@ -180,7 +180,7 @@ class UserService:
     def get_favorite_manga(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
-        return usermanga.favourite_manga
+        return usermanga.favorite_manga
 
     def get_purchased_manga(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
