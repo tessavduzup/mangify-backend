@@ -53,7 +53,7 @@ class MangaService:
 
     def add_manga(self, request_data):
         """По данным запроса добавляет новую мангу в БД"""
-        new_wrap = Image(wrap_path=request_data['wrap_path'])  # TODO
+        new_wrap = Image(wrap_path=request_data['wrap_path'])
 
         db.session.add(new_wrap)
         db.session.flush()

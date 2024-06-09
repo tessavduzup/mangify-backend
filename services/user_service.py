@@ -177,7 +177,7 @@ class UserService:
             return {"error": "Неверный код!"}
 
     @staticmethod
-    def auth(request_data):  # TODO
+    def auth(request_data):
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
             return user.id
