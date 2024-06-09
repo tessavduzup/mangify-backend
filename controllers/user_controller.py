@@ -132,7 +132,7 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/add_to_cart", methods=["POST"])
+    @app.route("/api/v1/users/<int:user_id>/cart", methods=["POST"])
     def add_to_cart(user_id):
         try:
             request_data = request.get_json()
@@ -150,7 +150,7 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/delete_from_cart", methods=["DELETE"])
+    @app.route("/api/v1/users/<int:user_id>/cart", methods=["DELETE"])
     def delete_from_cart(user_id):
         try:
             request_data = request.get_json()
@@ -168,7 +168,7 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/add_to_favorite_manga", methods=["POST"])
+    @app.route("/api/v1/users/<int:user_id>/favorite", methods=["POST"])
     def add_to_favorite(user_id):
         try:
             request_data = request.get_json()
@@ -186,7 +186,7 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/delete_from_favorite_manga", methods=["DELETE"])
+    @app.route("/api/v1/users/<int:user_id>/favorite", methods=["DELETE"])
     def delete_from_favorite(user_id):
         try:
             request_data = request.get_json()
@@ -223,11 +223,11 @@ class UserController(Resource):
         return _user_service.get_cart(user_id)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/favorite_manga", methods=["GET"])
+    @app.route("/api/v1/users/<int:user_id>/favorite", methods=["GET"])
     def get_favorite_manga(user_id):
         return _user_service.get_favorite_manga(user_id)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/purchased_manga", methods=["GET"])
+    @app.route("/api/v1/users/<int:user_id>/purchased", methods=["GET"])
     def get_purchased_manga(user_id):
         return _user_service.get_purchased_manga(user_id)
