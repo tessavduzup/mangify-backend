@@ -1,11 +1,5 @@
 import random
-<<<<<<< HEAD
-=======
-
-from flask import jsonify
->>>>>>> 53c0356225d9ef409b0e0186adea73704abc1480
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from application import db, redis_client
 from exceptions import (EmailDuplicateError, MangaDuplicateError,
                         MangaNotFoundError, UsernameDuplicateError,
@@ -183,7 +177,7 @@ class UserService:
 
         return usermanga.cart
 
-    def get_favourite_manga(self, user_id):
+    def get_favorite_manga(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
         return usermanga.favourite_manga

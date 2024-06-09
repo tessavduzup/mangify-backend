@@ -223,15 +223,9 @@ class UserController(Resource):
         return _user_service.get_cart(user_id)
 
     @staticmethod
-<<<<<<< HEAD
-    @app.route("/api/v1/users/<int:user_id>/favourite_manga", methods=["GET"])
-    def get_favourite_manga(user_id):
-        return _user_service.get_favourite_manga(user_id)
-=======
     @app.route("/api/v1/users/<int:user_id>/favorite", methods=["GET"])
     def get_favorite_manga(user_id):
         return _user_service.get_favorite_manga(user_id)
->>>>>>> 53c0356225d9ef409b0e0186adea73704abc1480
 
     @staticmethod
     @app.route("/api/v1/users/<int:user_id>/purchased", methods=["GET"])
