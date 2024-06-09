@@ -139,7 +139,7 @@ class UserController(Resource):
             manga_id = request_data['manga_id']
             _user_service.add_to_cart(user_id, manga_id)
 
-            return _user_service.find_user(user_id)
+            return _user_service.get_cart(user_id)
         except MangaDuplicateError as ex:
             users_logger.error("MangaDuplicateError")
 
@@ -157,7 +157,7 @@ class UserController(Resource):
             manga_id = request_data['manga_id']
             _user_service.delete_from_cart(user_id, manga_id)
 
-            return _user_service.find_user(user_id)
+            return _user_service.get_cart(user_id)
         except MangaNotFoundError as ex:
             users_logger.error("MangaNotFoundError")
 
@@ -175,7 +175,7 @@ class UserController(Resource):
             manga_id = request_data['manga_id']
             _user_service.add_to_favorite(user_id, manga_id)
 
-            return _user_service.find_user(user_id)
+            return _user_service.get_favorite_manga(user_id)
         except MangaDuplicateError as ex:
             users_logger.error("MangaDuplicateError")
 
@@ -193,7 +193,7 @@ class UserController(Resource):
             manga_id = request_data['manga_id']
             _user_service.delete_from_favorite(user_id, manga_id)
 
-            return _user_service.find_user(user_id)
+            return _user_service.get_favorite_manga(user_id)
         except MangaNotFoundError as ex:
             users_logger.error("MangaNotFoundError")
 

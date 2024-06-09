@@ -193,8 +193,17 @@ class UserService:
     @staticmethod
     def get_favorite_manga(user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
+        favorite_ids = usermanga.favorite_manga.get('favorite_manga', [])
+        manga = Manga.query.all()
+        manga = [manga.to_dict() for manga in manga]
+        response = []
+        for manga in manga:
+            if manga["id"] in favorite_ids:
+                manga["isFavorite"] = True
+                response.append(manga)
 
-        return usermanga.favorite_manga["favorite_manga"]
+        return response
+
 
     @staticmethod
     def get_purchased_manga(user_id):
