@@ -1,5 +1,5 @@
-from models import Image
 from application import db
+from models import Image
 
 
 class Manga(db.Model):
