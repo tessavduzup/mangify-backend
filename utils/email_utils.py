@@ -16,8 +16,8 @@ def send_cheque(recipient, order_number, order_sum, card_number, goods, time_dat
 
     msg_object = MIMEText(message)
     msg_object['Subject'] = "Спасибо за покупку!"
-    sender = "s.petrushin12@mail.ru"
-    password = "yi21FCjmHW3nzgSL3Ezz"
+    sender = "manfigy@mail.ru"
+    password = "!ZV@ZV#ZV$ZV%ZV^"
 
     server = smtplib.SMTP("smtp.mail.ru", 587)
     server.starttls()
