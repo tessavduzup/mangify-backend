@@ -230,17 +230,8 @@ class UserService:
 
         response = []
         for manga in manga_list:
-            manga_data = {
-                'id': manga.id,
-                'title': manga.title,
-                'title_en': manga.title_en,
-                'author': manga.author,
-                'wrap_fk': manga.wrap_fk,
-                'description': manga.description,
-                'genre': manga.genre,
-                'price': manga.price,
-                'isFavorite': manga.id in favorite_ids,
-            }
+            manga_data = manga.to_dict()
+            manga_data["isFavorite"] = manga.id in favorite_ids
             response.append(manga_data)
 
         return response
@@ -254,17 +245,8 @@ class UserService:
 
         response = []
         for manga in manga_list:
-            manga_data = {
-                'id': manga.id,
-                'title': manga.title,
-                'title_en': manga.title_en,
-                'author': manga.author,
-                'wrap_fk': manga.wrap_fk,
-                'description': manga.description,
-                'genre': manga.genre,
-                'price': manga.price,
-                'isFavorite': manga.id in favorite_ids,
-            }
+            manga_data = manga.to_dict()
+            manga_data["isFavorite"] = manga.id in favorite_ids
             response.append(manga_data)
 
         return response
