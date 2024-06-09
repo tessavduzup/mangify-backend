@@ -1,5 +1,4 @@
 import random
-from flask import jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from exceptions import (UsernameDuplicateError, UserNotFoundError,
                         MangaDuplicateError, MangaNotFoundError, EmailDuplicateError)
@@ -178,9 +177,15 @@ class UserService:
 
         return usermanga.cart
 
+    def get_favourite_manga(self, user_id):
+        usermanga = UserManga.query.filter_by(id=user_id).first()
 
+        return usermanga.favourite_manga
 
+    def get_purchased_manga(self, user_id):
+        usermanga = UserManga.query.filter_by(id=user_id).first()
 
+        return usermanga.purchased_manga
 
     def delete_all_users(self):
         users = Users.query.all()
