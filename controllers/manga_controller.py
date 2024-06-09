@@ -135,7 +135,7 @@ class MangaController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/delete_all_manga", methods=["DELETE"])
+    @app.route("/api/v1/manga", methods=["DELETE"])
     def delete_all_manga():
         _manga_service.delete_all_manga()
         return _manga_service.find_all_manga()

@@ -126,7 +126,7 @@ class GenreController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/delete_all_genres", methods=["DELETE"])
+    @app.route("/api/v1/genres", methods=["DELETE"])
     def delete_all_genres():
         _genre_service.delete_all_genres()
         return _genre_service.find_all_genres()

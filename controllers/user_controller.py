@@ -204,7 +204,7 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/delete_all_users", methods=["DELETE"])
+    @app.route("/api/v1/users", methods=["DELETE"])
     def delete_all_users():
         _user_service.delete_all_users()
         return _user_service.find_all_users()
