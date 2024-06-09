@@ -1,6 +1,6 @@
-from exceptions import GenreNotFoundError, GenreDuplicateError
-from models import Genre
 from application import db
+from exceptions import GenreDuplicateError, GenreNotFoundError
+from models import Genre
 
 
 class GenreService:

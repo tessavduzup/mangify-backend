@@ -1,13 +1,13 @@
-from flask import jsonify, request, Response
+from flask import Response, jsonify, request
 from flask_restful import Resource
-from exceptions import GenreNotFoundError, GenreDuplicateError
+from jsonschema.exceptions import ValidationError
+
 from application import app
+from exceptions import GenreDuplicateError, GenreNotFoundError
+from loggers import genre_logger
+from models import ProblemDetails
 from services import GenreService
 from validators import GenreValidator
-from jsonschema.exceptions import ValidationError
-from models import ProblemDetails
-from loggers import genre_logger
-
 
 _genre_service = GenreService()
 _genre_validator = GenreValidator()
@@ -18,7 +18,7 @@ class GenreController(Resource):
     @app.route("/api/v1/manga/genres", methods=["GET"])
     def get_genres():
         """Обработчик запроса, отображающий список всех жанров в JSON-формате"""
-        return {"genres": _genre_service.find_all_genres()}
+        return _genre_service.find_all_genres()
 
     @staticmethod
     @app.route("/api/v1/manga/genres/<int:genre_id>", methods=["GET"])
@@ -58,7 +58,7 @@ class GenreController(Resource):
             _genre_validator.validate_add_genre(request_data)
             _genre_service.add_genre(request_data)
 
-            return {"genres": _genre_service.find_all_genres()}
+            return _genre_service.find_all_genres()
         except GenreDuplicateError as ex:
             genre_logger.error("GenreDuplicateError")
 
@@ -129,7 +129,7 @@ class GenreController(Resource):
     @app.route("/api/v1/delete_all_genres", methods=["DELETE"])
     def delete_all_genres():
         _genre_service.delete_all_genres()
-        return {"genres": _genre_service.find_all_genres()}
+        return _genre_service.find_all_genres()
 
     @staticmethod
     @app.route("/api/v1/fill_up_genres_table", methods=["POST"])
@@ -137,4 +137,4 @@ class GenreController(Resource):
         request_data = request.get_json()
         _genre_service.fill_up_genres_table(request_data)
 
-        return {"genres": _genre_service.find_all_genres()}
+        return _genre_service.find_all_genres()

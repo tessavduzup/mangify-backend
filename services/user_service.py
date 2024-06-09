@@ -1,11 +1,17 @@
 import random
+<<<<<<< HEAD
+=======
+
+from flask import jsonify
+>>>>>>> 53c0356225d9ef409b0e0186adea73704abc1480
 from werkzeug.security import check_password_hash, generate_password_hash
-from exceptions import (UsernameDuplicateError, UserNotFoundError,
-                        MangaDuplicateError, MangaNotFoundError, EmailDuplicateError)
-from models import Users, UserManga
-from application import db
+
+from application import db, redis_client
+from exceptions import (EmailDuplicateError, MangaDuplicateError,
+                        MangaNotFoundError, UsernameDuplicateError,
+                        UserNotFoundError)
+from models import UserManga, Users
 from utils.email_utils import confirm_registration
-from application import redis_client
 
 
 class UserService:
@@ -87,32 +93,32 @@ class UserService:
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
-        usermanga_fm = usermanga.favourite_manga
+        usermanga_fm = usermanga.favorite_manga
         usermanga_pm = usermanga.purchased_manga
 
         usermanga_cart['cart'].append(manga_id)
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
-                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+                                  favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
 
         db.session.delete(usermanga)
         db.session.add(new_usermanga)
         db.session.commit()
 
-    def add_to_favourite(self, user_id, manga_id):
+    def add_to_favorite(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
-        if manga_id in usermanga.favourite_manga:
+        if manga_id in usermanga.favorite_manga:
             raise MangaDuplicateError("Эта манга уже в избранном")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
-        usermanga_fm = usermanga.favourite_manga
+        usermanga_fm = usermanga.favorite_manga
         usermanga_pm = usermanga.purchased_manga
 
-        usermanga_fm['favourite_manga'].append(manga_id)
+        usermanga_fm['favorite_manga'].append(manga_id)
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
-                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+                                  favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
 
         db.session.delete(usermanga)
         db.session.add(new_usermanga)
@@ -125,32 +131,32 @@ class UserService:
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
-        usermanga_fm = usermanga.favourite_manga
+        usermanga_fm = usermanga.favorite_manga
         usermanga_pm = usermanga.purchased_manga
 
         usermanga_cart['cart'].remove(manga_id)
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
-                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+                                  favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
 
         db.session.delete(usermanga)
         db.session.add(new_usermanga)
         db.session.commit()
 
-    def delete_from_favourite(self, user_id, manga_id):
+    def delete_from_favorite(self, user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
-        if manga_id not in usermanga.favourite_manga['favourite_manga']:
+        if manga_id not in usermanga.favorite_manga['favorite_manga']:
             raise MangaNotFoundError("В избранном нет этой манги")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
-        usermanga_fm = usermanga.favourite_manga
+        usermanga_fm = usermanga.favorite_manga
         usermanga_pm = usermanga.purchased_manga
 
-        usermanga_fm['favourite_manga'].remove(manga_id)
+        usermanga_fm['favorite_manga'].remove(manga_id)
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
-                                  favourite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+                                  favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
 
         db.session.delete(usermanga)
         db.session.add(new_usermanga)

@@ -1,10 +1,10 @@
-from payment import WalletDuplicateError, WalletValidator, WalletService
-from models import ProblemDetails
-from flask import jsonify, request, Response
+from flask import Response, jsonify, request
 from flask_restful import Resource
 from jsonschema.exceptions import ValidationError
-from application import app
 
+from application import app
+from models import ProblemDetails
+from payment import WalletDuplicateError, WalletService, WalletValidator
 
 _wallet_service = WalletService()
 _wallet_validator = WalletValidator()

@@ -1,5 +1,5 @@
-from models import UserManga
 from application import db
+from models import UserManga
 
 
 class Users(db.Model):
@@ -17,7 +17,7 @@ class Users(db.Model):
             'username': self.username,
             "email": self.email,
             'cart': user_manga.cart["cart"],
-            'favourite_manga': user_manga.favourite_manga["favourite_manga"],
+            'favorite_manga': user_manga.favorite_manga["favorite_manga"],
             'purchased_manga': user_manga.purchased_manga["purchased_manga"],
             'is_admin': self.is_admin
         }
@@ -33,12 +33,12 @@ class Users(db.Model):
     #     return []
     #
     # @staticmethod
-    # def get_favourite_manga(user_id):
+    # def get_favorite_manga(user_id):
     #     user_manga = UserManga.query.filter_by(id=user_id).first()
     #     if user_manga:
-    #         manga_ids = user_manga.favourite_manga["favourite_manga"]
-    #         favourite_manga = Manga.query.filter(Manga.id.in_(manga_ids)).all()
-    #         return [manga.to_dict() for manga in favourite_manga]
+    #         manga_ids = user_manga.favorite_manga["favorite_manga"]
+    #         favorite_manga = Manga.query.filter(Manga.id.in_(manga_ids)).all()
+    #         return [manga.to_dict() for manga in favorite_manga]
     #
     #     return []
     #
