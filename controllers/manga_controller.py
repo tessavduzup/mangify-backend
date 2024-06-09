@@ -1,13 +1,13 @@
-from flask import jsonify, request, Response
+from flask import Response, jsonify, request
 from flask_restful import Resource
-from models import ProblemDetails
-from exceptions import MangaNotFoundError, MangaDuplicateError
+from jsonschema.exceptions import ValidationError
+
 from application import app
+from exceptions import MangaDuplicateError, MangaNotFoundError
+from loggers import manga_logger
+from models import ProblemDetails
 from services import MangaService
 from validators import MangaValidator
-from jsonschema.exceptions import ValidationError
-from loggers import manga_logger
-
 
 _manga_service = MangaService()
 _manga_validator = MangaValidator()
@@ -18,13 +18,13 @@ class MangaController(Resource):
     @app.route("/api/v1/manga", methods=["GET"])
     def get_all_manga():
         """Обработчик запроса, отображающий список всей манги в JSON-формате"""
-        return {"all_manga": _manga_service.find_all_manga()}
+        return _manga_service.find_all_manga()
 
     @staticmethod
     @app.route("/api/v1/top_manga", methods=["GET"])
     def get_top_manga():
         """Обработчик запроса, отображающий список популярной манги в JSON-формате"""
-        return {"top_manga": _manga_service.find_top_manga()}
+        return _manga_service.find_top_manga()
 
     @staticmethod
     @app.route("/api/v1/similar_manga/<int:manga_id>", methods=["GET"])
@@ -37,7 +37,7 @@ class MangaController(Resource):
                 if manga.id != manga_id:
                     response.append(manga.to_dict())
 
-            return {"similar_manga": response}
+            return response
         except MangaNotFoundError as ex:
             manga_logger.error("MangaNotFoundError")
 
@@ -67,7 +67,7 @@ class MangaController(Resource):
             _manga_validator.validate_add_manga(request_data)
             _manga_service.add_manga(request_data)
 
-            return {"all_manga": _manga_service.find_all_manga()}
+            return _manga_service.find_all_manga()
         except MangaDuplicateError as ex:
             manga_logger.error("MangaDuplicateError")
 
@@ -138,7 +138,7 @@ class MangaController(Resource):
     @app.route("/api/v1/delete_all_manga", methods=["DELETE"])
     def delete_all_manga():
         _manga_service.delete_all_manga()
-        return {"all_manga": _manga_service.find_all_manga()}
+        return _manga_service.find_all_manga()
 
     @staticmethod
     @app.route("/api/v1/fill_up_manga_table", methods=["POST"])
@@ -146,4 +146,4 @@ class MangaController(Resource):
         request_data = request.get_json()
         _manga_service.fill_up_manga_table(request_data)
 
-        return {"all_manga": _manga_service.find_all_manga()}
+        return _manga_service.find_all_manga()

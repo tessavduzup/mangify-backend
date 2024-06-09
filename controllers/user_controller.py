@@ -1,14 +1,15 @@
-from flask import jsonify, request, Response
+from flask import Response, jsonify, request
 from flask_restful import Resource
-from exceptions import (UserNotFoundError, UsernameDuplicateError,
-                        MangaDuplicateError, MangaNotFoundError, EmailDuplicateError)
-from application import app
-from services import UserService
-from models import ProblemDetails
-from validators import UserValidator
 from jsonschema.exceptions import ValidationError
-from loggers import users_logger
 
+from application import app
+from exceptions import (EmailDuplicateError, MangaDuplicateError,
+                        MangaNotFoundError, UsernameDuplicateError,
+                        UserNotFoundError)
+from loggers import users_logger
+from models import ProblemDetails
+from services import UserService
+from validators import UserValidator
 
 _user_service = UserService()
 _user_validator = UserValidator()
@@ -33,7 +34,7 @@ class UserController(Resource):
     @app.route("/api/v1/users", methods=["GET"])
     def get_users():
         """Отображает список всех пользователей в JSON-формате"""
-        return {"users": _user_service.find_all_users()}
+        return _user_service.find_all_users()
 
     @staticmethod
     @app.route("/api/v1/users/<int:user_id>", methods=["GET"])
@@ -59,7 +60,7 @@ class UserController(Resource):
             _user_validator.validate_add_user(request_data)
             _user_service.add_user(request_data)
 
-            return {"users": _user_service.find_all_users()}
+            return _user_service.find_all_users()
         except UsernameDuplicateError as ex:
             users_logger.error("UsernameDuplicateError")
 
@@ -167,12 +168,12 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/add_to_favourite_manga", methods=["POST"])
-    def add_to_favourite(user_id):
+    @app.route("/api/v1/users/<int:user_id>/add_to_favorite_manga", methods=["POST"])
+    def add_to_favorite(user_id):
         try:
             request_data = request.get_json()
             manga_id = request_data['manga_id']
-            _user_service.add_to_favourite(user_id, manga_id)
+            _user_service.add_to_favorite(user_id, manga_id)
 
             return _user_service.find_user(user_id)
         except MangaDuplicateError as ex:
@@ -185,14 +186,14 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/delete_from_favourite_manga", methods=["DELETE"])
-    def delete_from_favourite(user_id):
+    @app.route("/api/v1/users/<int:user_id>/delete_from_favorite_manga", methods=["DELETE"])
+    def delete_from_favorite(user_id):
         try:
             request_data = request.get_json()
             manga_id = request_data['manga_id']
-            _user_service.delete_from_favourite(user_id, manga_id)
+            _user_service.delete_from_favorite(user_id, manga_id)
 
-            return jsonify(_user_service.find_user(user_id))
+            return _user_service.find_user(user_id)
         except MangaNotFoundError as ex:
             users_logger.error("MangaNotFoundError")
 
@@ -206,7 +207,7 @@ class UserController(Resource):
     @app.route("/api/v1/delete_all_users", methods=["DELETE"])
     def delete_all_users():
         _user_service.delete_all_users()
-        return {"all_users": _user_service.find_all_users()}
+        return _user_service.find_all_users()
 
     @staticmethod
     @app.route("/api/v1/fill_up_users_table", methods=["POST"])
@@ -214,19 +215,19 @@ class UserController(Resource):
         request_data = request.get_json()
         _user_service.fill_up_users_table(request_data)
 
-        return {"all_manga": _user_service.find_all_users()}
+        return _user_service.find_all_users()
 
     @staticmethod
     @app.route("/api/v1/users/<int:user_id>/cart", methods=["GET"])
     def get_cart(user_id):
-        return {"cart": _user_service.get_cart(user_id)}
+        return _user_service.get_cart(user_id)
 
     @staticmethod
-    @app.route("/api/v1/users/<int:user_id>/favourite_manga", methods=["GET"])
-    def get_favourite_manga(user_id):
-        return {"favourite_manga": _user_service.get_favourite_manga(user_id)}
+    @app.route("/api/v1/users/<int:user_id>/favorite_manga", methods=["GET"])
+    def get_favorite_manga(user_id):
+        return _user_service.get_favorite_manga(user_id)
 
     @staticmethod
     @app.route("/api/v1/users/<int:user_id>/purchased_manga", methods=["GET"])
     def get_purchased_manga(user_id):
-        return {"purchased_manga": _user_service.get_purchased_manga(user_id)}
+        return _user_service.get_purchased_manga(user_id)
