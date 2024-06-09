@@ -231,3 +231,13 @@ class UserController(Resource):
     @app.route("/api/v1/users/<int:user_id>/purchased", methods=["GET"])
     def get_purchased_manga(user_id):
         return _user_service.get_purchased_manga(user_id)
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/manga", methods=["GET"])
+    def get_user_manga(user_id):
+        return _user_service.get_user_manga(user_id)
+
+    @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/top_manga", methods=["GET"])
+    def get_user_top_manga(user_id):
+        return _user_service.get_user_top_manga(user_id)
