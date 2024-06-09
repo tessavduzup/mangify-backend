@@ -1,7 +1,8 @@
 import datetime
-from payment import Wallet, WalletDuplicateError
-from models import Users, UserManga, Orders
+
 from application import db
+from models import Orders, UserManga, Users
+from payment import Wallet, WalletDuplicateError
 from utils.email_utils import send_cheque
 
 
