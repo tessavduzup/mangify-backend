@@ -25,7 +25,7 @@ class Manga(db.Model):
             'id': self.id,
             'author': self.author,
             'title': self.title,
-            'title-en': self.title_en,
+            'title_en': self.title_en,
             'wrap_path': self.get_path_to_file(self.wrap_fk),
             'description': self.description,
             'genre': self.genre,
