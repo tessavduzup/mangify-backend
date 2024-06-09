@@ -175,17 +175,17 @@ class UserService:
     def get_cart(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
-        return usermanga.cart
+        return usermanga.cart["cart"]
 
     def get_favorite_manga(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
-        return usermanga.favorite_manga
+        return usermanga.favorite_manga["favorite_manga"]
 
     def get_purchased_manga(self, user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
-        return usermanga.purchased_manga
+        return usermanga.purchased_manga["purchased_manga"]
 
     def delete_all_users(self):
         users = Users.query.all()
