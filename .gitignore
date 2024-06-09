@@ -4,4 +4,7 @@ config.py
 /.vscode
 .idea
 *.pyc
+__pycache__
 */__pycache__
+*/*/__pycache__
+loggers
