@@ -1,10 +1,5 @@
-config.py
-/venv
-/.venv
-/.vscode
+.venv
+.vscode
 .idea
-*.pyc
 __pycache__
-*/__pycache__
-*/*/__pycache__
-loggers
+loggers/loggers.*.log
