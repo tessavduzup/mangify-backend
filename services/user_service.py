@@ -1,4 +1,6 @@
 import random
+from collections import Counter
+
 from sqlalchemy import func
 from werkzeug.security import check_password_hash, generate_password_hash
 from application import db, redis_client
@@ -89,8 +91,6 @@ class UserService:
     @staticmethod
     def add_to_cart(user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
-        if manga_id in usermanga.cart:
-            raise MangaDuplicateError("Эта манга уже в корзине")
 
         usermanga_id = usermanga.id
         usermanga_cart = usermanga.cart
@@ -187,8 +187,14 @@ class UserService:
     @staticmethod
     def get_cart(user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
-
-        return usermanga.cart["cart"]
+        manga_row = Manga.query.all()
+        manga_list = [manga.to_dict() for manga in manga_row]
+        cart = []
+        cartValue = 0
+        for manga_id in usermanga.cart["cart"]:
+            cart.append(manga_list[manga_id - 1])
+            cartValue += manga_list[manga_id - 1]["price"]
+        return {"cart": cart, "cartValue": cartValue}
 
     @staticmethod
     def get_favorite_manga(user_id):
@@ -236,11 +242,13 @@ class UserService:
         user_manga = UserManga.query.get(user_id)
 
         favorite_ids = user_manga.favorite_manga.get('favorite_manga', [])
+        cart_ids = user_manga.cart.get("cart")
 
         response = []
         for manga in manga_list:
             manga_data = manga.to_dict()
             manga_data["isFavorite"] = manga.id in favorite_ids
+            manga_data["inCart"] = Counter(cart_ids)[manga.id]
             response.append(manga_data)
 
         return response
@@ -251,11 +259,13 @@ class UserService:
         user_manga = UserManga.query.get(user_id)
 
         favorite_ids = user_manga.favorite_manga.get('favorite_manga', [])
+        cart_ids = user_manga.cart.get("cart")
 
         response = []
         for manga in manga_list:
             manga_data = manga.to_dict()
             manga_data["isFavorite"] = manga.id in favorite_ids
+            manga_data["inCart"] = Counter(cart_ids)[manga.id]
             response.append(manga_data)
 
         return response

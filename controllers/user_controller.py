@@ -140,10 +140,6 @@ class UserController(Resource):
             _user_service.add_to_cart(user_id, manga_id)
 
             return _user_service.get_cart(user_id)
-        except MangaDuplicateError as ex:
-            users_logger.error("MangaDuplicateError")
-
-            return Response(ex.msg, status=409)
         except Exception as ex:
             users_logger.error("Unknown Error")
 
