@@ -188,12 +188,16 @@ class UserService:
     def get_cart(user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
         manga_row = Manga.query.all()
-        manga_list = [manga.to_dict() for manga in manga_row]
+        cart_ids = usermanga.cart["cart"]
         cart = []
         cartValue = 0
-        for manga_id in usermanga.cart["cart"]:
-            cart.append(manga_list[manga_id - 1])
-            cartValue += manga_list[manga_id - 1]["price"]
+        for row in manga_row:
+            manga = row.to_dict()
+            if manga["id"] in cart_ids:
+                manga["inCart"] = Counter(cart_ids)[row.id]
+                cartValue += row.price * manga["inCart"]
+                cart.append(manga)
+
         return {"cart": cart, "cartValue": cartValue}
 
     @staticmethod
