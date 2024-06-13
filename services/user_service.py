@@ -63,32 +63,6 @@ class UserService:
         redis_client.close()
 
     @staticmethod
-    def delete_user(user_id: int):
-        """Находит в БД пользователя по ID и удаляет его"""
-        user_to_delete = Users.query.filter_by(id=user_id).first()
-        if not user_to_delete:
-            raise UserNotFoundError("Пользователь не найден")
-
-        db.session.delete(user_to_delete)
-        db.session.commit()
-
-    @staticmethod
-    def update_user(user_id, request_data):
-        """Находит в БД пользователя по ID и обновляет его данные"""
-        user = Users.query.filter_by(id=user_id).first()
-        if not user:
-            raise UserNotFoundError("Пользователь не найден")
-
-        user_check = Users.query.filter_by(username=request_data["username"]).first()
-        if user_check:
-            raise UsernameDuplicateError("Пользователь с таким именем уже существует")
-
-        for key in request_data:
-            setattr(user, key, request_data[key])
-
-        db.session.commit()
-
-    @staticmethod
     def add_to_cart(user_id, manga_id):
         usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
 
@@ -138,6 +112,26 @@ class UserService:
         usermanga_pm = usermanga.purchased_manga
 
         usermanga_cart['cart'].remove(manga_id)
+
+        new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                  favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+        db.session.delete(usermanga)
+        db.session.add(new_usermanga)
+        db.session.commit()
+
+    @staticmethod
+    def delete_all_from_cart(user_id, manga_id):
+        usermanga = db.session.query(UserManga).join(Users).filter_by(id=user_id).first()
+        if manga_id not in usermanga.cart['cart']:
+            raise MangaNotFoundError("В корзине нет этой манги")
+
+        usermanga_id = usermanga.id
+        usermanga_cart = usermanga.cart
+        usermanga_fm = usermanga.favorite_manga
+        usermanga_pm = usermanga.purchased_manga
+
+        usermanga_cart['cart'].filter(lambda item: item != manga_id)
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
                                   favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
@@ -220,25 +214,6 @@ class UserService:
         usermanga = UserManga.query.filter_by(id=user_id).first()
 
         return usermanga.purchased_manga["purchased_manga"]
-
-    @staticmethod
-    def delete_all_users():
-        users = Users.query.all()
-        for i in range(len(users)):
-            db.session.delete(users[i])
-
-        db.session.commit()
-
-    @staticmethod
-    def fill_up_users_table(request_data):
-        for row in request_data:
-            new_user = Users(username=row["username"], email=row["email"],
-                             psw=generate_password_hash(row["psw"]))
-
-            db.session.add(new_user)
-            db.session.flush()
-
-        db.session.commit()
 
     @staticmethod
     def get_user_manga(user_id):
