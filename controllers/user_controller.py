@@ -97,6 +97,24 @@ class UserController(Resource):
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
 
     @staticmethod
+    @app.route("/api/v1/users/<int:user_id>/cart/all", methods=["DELETE"])
+    def delete_all_from_cart(user_id):
+        try:
+            request_data = request.get_json()
+            manga_id = request_data['manga_id']
+            _user_service.delete_all_from_cart(user_id, manga_id)
+
+            return _user_service.get_cart(user_id)
+        except MangaNotFoundError as ex:
+            users_logger.error("MangaNotFoundError")
+
+            return Response(ex.msg, status=404)
+        except Exception as ex:
+            users_logger.error("Unknown Error")
+
+            return Response(f"Непредвиденная ошибка: {ex}", status=500)
+
+    @staticmethod
     @app.route("/api/v1/users/<int:user_id>/favorite", methods=["POST"])
     def add_to_favorite(user_id):
         try:

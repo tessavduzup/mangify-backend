@@ -131,7 +131,7 @@ class UserService:
         usermanga_fm = usermanga.favorite_manga
         usermanga_pm = usermanga.purchased_manga
 
-        usermanga_cart['cart'].filter(lambda item: item != manga_id)
+        usermanga_cart['cart'] = list(filter(lambda item: item != manga_id, usermanga_cart['cart']))
 
         new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
                                   favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
