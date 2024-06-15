@@ -181,7 +181,7 @@ class UserService:
     def auth(request_data):
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
-            return user.id
+            return {"user_id": user.id}
         else:
             return {"error": "Неверный логин или пароль"}
 
