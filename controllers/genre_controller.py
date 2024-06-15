@@ -124,17 +124,3 @@ class GenreController(Resource):
             genre_logger.error("Unknown Error")
 
             return Response(f"Непредвиденная ошибка: {ex}", status=500)
-
-    @staticmethod
-    @app.route("/api/v1/genres", methods=["DELETE"])
-    def delete_all_genres():
-        _genre_service.delete_all_genres()
-        return _genre_service.find_all_genres()
-
-    @staticmethod
-    @app.route("/api/v1/fill_up_genres_table", methods=["POST"])
-    def fill_up_genres_table():
-        request_data = request.get_json()
-        _genre_service.fill_up_genres_table(request_data)
-
-        return _genre_service.find_all_genres()

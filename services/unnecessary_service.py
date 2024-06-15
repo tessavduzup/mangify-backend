@@ -1,14 +1,9 @@
-import random
-from collections import Counter
-
-from sqlalchemy import func
-from werkzeug.security import check_password_hash, generate_password_hash
-from application import db, redis_client
-from exceptions import (EmailDuplicateError, MangaDuplicateError,
+from werkzeug.security import generate_password_hash
+from application import db
+from exceptions import (MangaDuplicateError,
                         MangaNotFoundError, UsernameDuplicateError,
                         UserNotFoundError, GenreNotFoundError)
-from models import UserManga, Users, Genre, Image, Manga
-from utils.email_utils import confirm_registration
+from models import Users, Genre, Image, Manga
 
 
 class UnnecessaryService:
@@ -58,7 +53,7 @@ class UnnecessaryService:
         db.session.commit()
 
     @staticmethod
-    def delete_all_manga(self):
+    def delete_all_manga():
         manga = Manga.query.all()
         for i in range(len(manga)):
             db.session.delete(manga[i])
@@ -72,7 +67,7 @@ class UnnecessaryService:
         db.session.commit()
 
     @staticmethod
-    def fill_up_manga_table(self, request_data):
+    def fill_up_manga_table(request_data):
         for row in request_data:
             new_wrap = Image(wrap_path=row['wrap_path'])
 
@@ -100,7 +95,7 @@ class UnnecessaryService:
             db.session.commit()
 
     @staticmethod
-    def add_manga(self, request_data):
+    def add_manga(request_data):
         """По данным запроса добавляет новую мангу в БД"""
         new_wrap = Image(wrap_path=request_data['wrap_path'])
 
@@ -129,7 +124,7 @@ class UnnecessaryService:
         db.session.commit()
 
     @staticmethod
-    def delete_manga(self, manga_id: int):
+    def delete_manga(manga_id: int):
         """Находит в БД мангу по ID и удаляет её"""
         manga_to_delete = Manga.query.filter_by(id=manga_id).first()
         if manga_to_delete is None:
@@ -139,7 +134,7 @@ class UnnecessaryService:
         db.session.commit()
 
     @staticmethod
-    def update_manga(self, manga_id, request_data):
+    def update_manga(manga_id, request_data):
         """Находит в БД мангу по ID и обновляет её данные"""
         manga = Manga.query.filter_by(id=manga_id).first()
         if manga is None:

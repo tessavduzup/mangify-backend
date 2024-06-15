@@ -1,9 +1,6 @@
 from sqlalchemy import func
-
-from application import db
-from exceptions import (GenreNotFoundError, MangaDuplicateError,
-                        MangaNotFoundError)
-from models import Genre, Image, Manga
+from exceptions import MangaNotFoundError
+from models import Manga
 
 
 class MangaService:

@@ -1,26 +1,25 @@
 from flask import Response, jsonify, request
 from flask_restful import Resource
 from jsonschema.exceptions import ValidationError
-
 from application import app
-from exceptions import (EmailDuplicateError, MangaDuplicateError,
-                        MangaNotFoundError, UsernameDuplicateError,
-                        UserNotFoundError)
+from exceptions import (UserNotFoundError)
 from loggers import users_logger
 from models import ProblemDetails
-from services import UserService
+from services import UnnecessaryService, UserService, GenreService
 from validators import UserValidator
 
+_unnecessary_service = UnnecessaryService()
+_genre_service = GenreService()
 _user_service = UserService()
 _user_validator = UserValidator()
 
 
-class UnnecessaryControllers:
+class UnnecessaryController(Resource):
     @staticmethod
     @app.route("/api/v1/fill_up_users_table", methods=["POST"])
     def fill_up_users_table():
         request_data = request.get_json()
-        _user_service.fill_up_users_table(request_data)
+        _unnecessary_service.fill_up_users_table(request_data)
 
         return _user_service.find_all_users()
 
@@ -52,7 +51,7 @@ class UnnecessaryControllers:
         try:
             request_data = request.get_json()
             _user_validator.validate_edit_user(request_data)
-            _user_service.update_user(user_id, request_data)
+            _unnecessary_service.update_user(user_id, request_data)
 
             return _user_service.find_user(user_id)
         except UserNotFoundError as ex:
@@ -80,7 +79,7 @@ class UnnecessaryControllers:
     def delete_user(user_id):
         """Удаляет пользователя"""
         try:
-            _user_service.delete_user(user_id)
+            _unnecessary_service.delete_user(user_id)
             return user_id
         except UserNotFoundError as ex:
             users_logger.error("UserNotFoundError")
@@ -94,5 +93,19 @@ class UnnecessaryControllers:
     @staticmethod
     @app.route("/api/v1/users", methods=["DELETE"])
     def delete_all_users():
-        _user_service.delete_all_users()
+        _unnecessary_service.delete_all_users()
         return _user_service.find_all_users()
+
+    @staticmethod
+    @app.route("/api/v1/genres", methods=["DELETE"])
+    def delete_all_genres():
+        _genre_service.delete_all_genres()
+        return _genre_service.find_all_genres()
+
+    @staticmethod
+    @app.route("/api/v1/fill_up_genres_table", methods=["POST"])
+    def fill_up_genres_table():
+        request_data = request.get_json()
+        _genre_service.fill_up_genres_table(request_data)
+
+        return _genre_service.find_all_genres()

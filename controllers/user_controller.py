@@ -3,9 +3,8 @@ from flask_restful import Resource
 from jsonschema.exceptions import ValidationError
 
 from application import app
-from exceptions import (EmailDuplicateError, MangaDuplicateError,
-                        MangaNotFoundError, UsernameDuplicateError,
-                        UserNotFoundError)
+from exceptions import (EmailDuplicateError,
+                        MangaNotFoundError, UsernameDuplicateError)
 from loggers import users_logger
 from models import ProblemDetails
 from services import UserService

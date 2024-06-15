@@ -52,7 +52,3 @@ def confirm_registration(recipient, username, code):
     except Exception as ex:
         return f"{ex}"
 
-
-# print(confirm_registration("c1208@mail.ru", "tessavduzup", "123456"))
-# print(send_cheque("c1208@mail.ru", "123123", 600, "3214",
-#                   ["Магическая битва", "Говно ежа"], datetime.datetime.now().replace(microsecond=0)))

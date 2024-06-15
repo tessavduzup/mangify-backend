@@ -1,15 +1,15 @@
 from flask import Response, jsonify, request
 from flask_restful import Resource
 from jsonschema.exceptions import ValidationError
-
 from application import app
 from exceptions import MangaDuplicateError, MangaNotFoundError
 from loggers import manga_logger
 from models import ProblemDetails
-from services import MangaService
+from services import MangaService, UnnecessaryService
 from validators import MangaValidator
 
 _manga_service = MangaService()
+_unnecessary_service = UnnecessaryService()
 _manga_validator = MangaValidator()
 
 
@@ -65,7 +65,7 @@ class MangaController(Resource):
         try:
             request_data = request.get_json()
             _manga_validator.validate_add_manga(request_data)
-            _manga_service.add_manga(request_data)
+            _manga_service.find_manga(request_data)
 
             return _manga_service.find_all_manga()
         except MangaDuplicateError as ex:
@@ -95,7 +95,7 @@ class MangaController(Resource):
         try:
             request_data = request.get_json()
             _manga_validator.validate_edit_manga(request_data)
-            _manga_service.update_manga(manga_id, request_data)
+            _unnecessary_service.update_manga(manga_id, request_data)
 
             return _manga_service.find_manga(manga_id)
         except MangaNotFoundError as ex:
@@ -123,7 +123,7 @@ class MangaController(Resource):
     def delete_manga(manga_id):
         """Обработчик запроса для удаления манги по ID"""
         try:
-            _manga_service.delete_manga(manga_id)
+            _unnecessary_service.delete_manga(manga_id)
             return manga_id
         except MangaNotFoundError as ex:
             manga_logger.error("MangaNotFoundError")
@@ -137,13 +137,13 @@ class MangaController(Resource):
     @staticmethod
     @app.route("/api/v1/manga", methods=["DELETE"])
     def delete_all_manga():
-        _manga_service.delete_all_manga()
+        _unnecessary_service.delete_all_manga()
         return _manga_service.find_all_manga()
 
     @staticmethod
     @app.route("/api/v1/fill_up_manga_table", methods=["POST"])
     def fill_up_manga_table():
         request_data = request.get_json()
-        _manga_service.fill_up_manga_table(request_data)
+        _unnecessary_service.fill_up_manga_table(request_data)
 
         return _manga_service.find_all_manga()

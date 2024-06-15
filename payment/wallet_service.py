@@ -1,35 +1,44 @@
 import datetime
-
 from application import db
+from exceptions import NoMoneyError
 from models import Orders, UserManga, Users
 from payment import Wallet, WalletDuplicateError
 from utils.email_utils import send_cheque
+from services import UserService
+
+
+_user_service = UserService()
 
 
 class WalletService:
-    def purchase_manga(self, request_data):
-        usermanga = db.session.query(UserManga).join(Users).filter_by(id=request_data['user_id']).first()
+    def purchase_manga(self, request_data):  # data - user_id, card_number
+        usermanga = db.session.query(UserManga).filter_by(id=request_data['user_id']).first()
         wallet = Wallet.query.filter_by(card_number=request_data['card_number']).first()
+        user = Users.query.filter_by(id=request_data["user_id"]).first()
 
-        if wallet.money_amount < request_data['amount_of_buying']:
-            return {"error": "No money - no honey"}
+        cart = _user_service.get_cart(request_data['user_id'])
+        goods = cart['cart']
+        amount_of_buying = cart['amount_of_buying']
+
+        if wallet.money_amount < amount_of_buying:
+            raise NoMoneyError("Мало денек")
         else:
-            wallet.money_amount -= request_data['amount_of_buying']
+            wallet.money_amount -= amount_of_buying
             db.session.flush()
 
-            usermanga.purchased_manga = usermanga.cart
-            usermanga.cart = []
+            usermanga.purchased_manga['purchased_manga'] = usermanga.cart['cart']
+            usermanga.cart["cart"] = []
             db.session.flush()
 
-            order_code = f"WEB-ORDER-{request_data['user_id']}{request_data['amount_of_buying']}"
-            new_order = Orders(order_code=order_code, order_sum=request_data['amount_of_buying'],
-                               client=request_data['user_id'], buying_content={"buying_content": request_data['goods']})
+            order_code = f"WEB-ORDER-{request_data['user_id']}{amount_of_buying}"
+            new_order = Orders(order_code=order_code, order_sum=amount_of_buying,
+                               client=request_data['user_id'], buying_content={"buying_content": goods})
 
             db.session.add(new_order)
             db.session.commit()
 
-            send_cheque(usermanga.email, order_code, request_data['amount_of_buying'],
-                        request_data['card_number'][-4:], request_data['goods'],
+            send_cheque(user.email, order_code, amount_of_buying,
+                        request_data['card_number'][-4:], goods,
                         datetime.datetime.now().replace(microsecond=0))
 
             return {"success": "Оплата прошла успешно"}

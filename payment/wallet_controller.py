@@ -3,6 +3,7 @@ from flask_restful import Resource
 from jsonschema.exceptions import ValidationError
 
 from application import app
+from exceptions import NoMoneyError
 from models import ProblemDetails
 from payment import WalletDuplicateError, WalletService, WalletValidator
 
@@ -19,7 +20,6 @@ class WalletController(Resource):
     @staticmethod
     @app.route("/api/v1/purchase_manga", methods=["PUT"])
     def purchase_manga():
-
         try:
             request_data = request.get_json()
             _wallet_validator.validate_purchase_manga(request_data)
@@ -29,6 +29,15 @@ class WalletController(Resource):
                 type="Ошибка валидации в сущности Wallet",
                 detail="Неверный формат данных",
                 title=ex.message,
+                status=400,
+                instance="http://127.0.0.1/api/v1/purchase_manga"
+            )
+            return jsonify(problem_details), 400
+        except NoMoneyError as ex:
+            problem_details = ProblemDetails(
+                type="Ошибка валидации в сущности Wallet",
+                detail="Недостаточно средств на балансе",
+                title=ex.msg,
                 status=400,
                 instance="http://127.0.0.1/api/v1/purchase_manga"
             )

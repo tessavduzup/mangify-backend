@@ -21,33 +21,3 @@ class Users(db.Model):
             'purchased_manga': user_manga.purchased_manga["purchased_manga"],
             'is_admin': self.is_admin
         }
-
-    # @staticmethod
-    # def get_cart(user_id):
-    #     user_manga = UserManga.query.filter_by(id=user_id).first()
-    #     if user_manga:
-    #         manga_ids = user_manga.cart["cart"]
-    #         manga_in_cart = Manga.query.filter(Manga.id.in_(manga_ids)).all()
-    #         return [manga.to_dict_for_cart() for manga in manga_in_cart]
-    #
-    #     return []
-    #
-    # @staticmethod
-    # def get_favorite_manga(user_id):
-    #     user_manga = UserManga.query.filter_by(id=user_id).first()
-    #     if user_manga:
-    #         manga_ids = user_manga.favorite_manga["favorite_manga"]
-    #         favorite_manga = Manga.query.filter(Manga.id.in_(manga_ids)).all()
-    #         return [manga.to_dict() for manga in favorite_manga]
-    #
-    #     return []
-    #
-    # @staticmethod
-    # def get_purchased_manga(user_id):
-    #     user_manga = UserManga.query.filter_by(id=user_id).first()
-    #     if user_manga:
-    #         manga_ids = user_manga.purchased_manga["purchased_manga"]
-    #         purchased_manga = Manga.query.filter(Manga.id.in_(manga_ids)).all()
-    #         return [manga.to_dict() for manga in purchased_manga]
-    #
-    #     return []

@@ -1,3 +1,4 @@
+import json
 import random
 from collections import Counter
 
@@ -46,21 +47,37 @@ class UserService:
         if user_email_check:
             raise EmailDuplicateError("Почта занята")
 
-        new_usermanga = UserManga()
-        db.session.add(new_usermanga)
-        db.session.flush()
-
-        new_user = Users(username=request_data["username"], psw=generate_password_hash(request_data["psw"]),
-                         email=request_data['email'], user_manga_fk=new_usermanga.id, is_admin=False)
-
-        db.session.add(new_user)
-        db.session.commit()
-
         code = random.randint(100000, 999999)
-        confirm_registration(new_user.email, request_data["username"], code)
+        confirm_registration(request_data["email"], request_data["username"], code)
 
-        redis_client.set(new_user.username, code)
+        redis_client.set(f"{request_data["username"]}-code", code)  # TODO поставить expire?
+        redis_client.set(f"{request_data["username"]}-data", json.dumps(request_data))
         redis_client.close()
+
+    @staticmethod
+    def email_confirmation(request_data):
+        if request_data['confirm_code'] == redis_client.get(f"{request_data["username"]}-code"):
+            new_usermanga = UserManga()
+            db.session.add(new_usermanga)
+            db.session.flush()
+
+            print(redis_client.get(f"{request_data["username"]}-data"))
+            user_data = json.loads(redis_client.get(f"{request_data["username"]}-data"))
+
+            new_user = Users(username=user_data["username"], psw=generate_password_hash(user_data["psw"]),
+                             email=user_data['email'], user_manga_fk=new_usermanga.id, is_admin=False)
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            redis_client.delete(f"{request_data["username"]}-code")
+            redis_client.delete(f"{request_data["username"]}-data")
+            redis_client.close()
+
+            return {"success": "Почта подтверждена!"}
+        else:
+            redis_client.close()
+            return {"error": "Неверный код!"}
 
     @staticmethod
     def add_to_cart(user_id, manga_id):
@@ -161,16 +178,6 @@ class UserService:
         db.session.commit()
 
     @staticmethod
-    def email_confirmation(request_data):
-        if request_data['confirm_code'] == redis_client.get(request_data['username']):
-            redis_client.delete(request_data['username'])
-            redis_client.close()
-            return {"success": "Почта подтверждена!"}
-        else:
-            redis_client.close()
-            return {"error": "Неверный код!"}
-
-    @staticmethod
     def auth(request_data):
         user = Users.query.filter_by(username=request_data['username']).first()
         if user and check_password_hash(user.psw, request_data['psw']):
@@ -181,18 +188,19 @@ class UserService:
     @staticmethod
     def get_cart(user_id):
         usermanga = UserManga.query.filter_by(id=user_id).first()
-        manga_row = Manga.query.all()
+        manga_raw = Manga.query.all()
         cart_ids = usermanga.cart["cart"]
+
         cart = []
-        cartValue = 0
-        for row in manga_row:
+        amount_of_buying = 0
+        for row in manga_raw:
             manga = row.to_dict()
             if manga["id"] in cart_ids:
                 manga["inCart"] = Counter(cart_ids)[row.id]
-                cartValue += row.price * manga["inCart"]
+                amount_of_buying += row.price * manga["inCart"]
                 cart.append(manga)
 
-        return {"cart": cart, "cartValue": cartValue}
+        return {"cart": cart, "amount_of_buying": amount_of_buying}
 
     @staticmethod
     def get_favorite_manga(user_id):
@@ -207,7 +215,6 @@ class UserService:
                 response.append(manga)
 
         return response
-
 
     @staticmethod
     def get_purchased_manga(user_id):
