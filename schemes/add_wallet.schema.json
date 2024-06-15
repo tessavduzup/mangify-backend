@@ -2,6 +2,8 @@
   "type": "object",
   "properties": {
     "card_number": {"type": "string"},
+    "card_date": {"type": "string"},
+    "cvv": {"type": "string"},
     "money_amount": {"type": "number"}
   },
   "required": ["card_number", "money_amount"],

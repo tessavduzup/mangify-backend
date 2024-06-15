@@ -5,6 +5,7 @@
 -   Flask
 -   Sqlalchemy
 -   Sqlite3
+-   Redis
 
 ## Run backend
 

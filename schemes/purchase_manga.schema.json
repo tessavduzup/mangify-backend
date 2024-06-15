@@ -2,7 +2,9 @@
   "type": "object",
   "properties": {
     "user_id": {"type": "number"},
-    "card_number": {"type": "string"}
+    "card_number": {"type": "string"},
+    "card_date": {"type": "string"},
+    "cvv": {"type": "string"}
   },
   "required": ["user_id", "card_number"],
   "additionalProperties": false
