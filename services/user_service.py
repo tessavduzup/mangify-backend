@@ -50,19 +50,19 @@ class UserService:
         code = random.randint(100000, 999999)
         confirm_registration(request_data["email"], request_data["username"], code)
 
-        redis_client.set(f"{request_data["username"]}-code", code)  # TODO поставить expire?
-        redis_client.set(f"{request_data["username"]}-data", json.dumps(request_data))
+        redis_client.set(f"{request_data['username']}-code", code)  # TODO поставить expire?
+        redis_client.set(f"{request_data['username']}-data", json.dumps(request_data))
         redis_client.close()
 
     @staticmethod
     def email_confirmation(request_data):
-        if request_data['confirm_code'] == redis_client.get(f"{request_data["username"]}-code"):
+        if request_data['confirm_code'] == redis_client.get(f"{request_data['username']}-code"):
             new_usermanga = UserManga()
             db.session.add(new_usermanga)
             db.session.flush()
 
-            print(redis_client.get(f"{request_data["username"]}-data"))
-            user_data = json.loads(redis_client.get(f"{request_data["username"]}-data"))
+            print(redis_client.get(f"{request_data['username']}-data"))
+            user_data = json.loads(redis_client.get(f"{request_data['username']}-data"))
 
             new_user = Users(username=user_data["username"], psw=generate_password_hash(user_data["psw"]),
                              email=user_data['email'], user_manga_fk=new_usermanga.id, is_admin=False)
@@ -70,8 +70,8 @@ class UserService:
             db.session.add(new_user)
             db.session.commit()
 
-            redis_client.delete(f"{request_data["username"]}-code")
-            redis_client.delete(f"{request_data["username"]}-data")
+            redis_client.delete(f"{request_data['username']}-code")
+            redis_client.delete(f"{request_data['username']}-data")
             redis_client.close()
 
             return {"success": "Почта подтверждена!"}
