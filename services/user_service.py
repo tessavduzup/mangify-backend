@@ -8,7 +8,7 @@ from application import db, redis_client
 from exceptions import (EmailDuplicateError, MangaDuplicateError,
                         MangaNotFoundError, UsernameDuplicateError,
                         UserNotFoundError)
-from models import UserManga, Users, Manga
+from models import UserManga, Users, Manga, Orders
 from utils.email_utils import confirm_registration
 
 
@@ -218,9 +218,9 @@ class UserService:
 
     @staticmethod
     def get_purchased_manga(user_id):
-        usermanga = UserManga.query.filter_by(id=user_id).first()
+        usermanga = Orders.query.filter_by(client=user_id).first()
 
-        return usermanga.purchased_manga["purchased_manga"]
+        return {"code": usermanga.order_code, "sum": usermanga.order_sum, "content": usermanga.buying_content["buying_content"]}
 
     @staticmethod
     def get_user_manga(user_id):
