@@ -34,6 +34,21 @@ class WalletService:
             new_order = Orders(order_code=order_code, order_sum=amount_of_buying,
                                client=request_data['user_id'], buying_content={"buying_content": goods})
 
+            usermanga = db.session.query(UserManga).join(Users).filter_by(id=request_data['user_id']).first()
+
+            usermanga_id = usermanga.id
+            usermanga_cart = usermanga.cart
+            usermanga_fm = usermanga.favorite_manga
+            usermanga_pm = usermanga.purchased_manga
+
+            usermanga_cart['cart'] = []
+
+            new_usermanga = UserManga(id=usermanga_id, cart=usermanga_cart,
+                                      favorite_manga=usermanga_fm, purchased_manga=usermanga_pm)
+
+            db.session.delete(usermanga)
+            db.session.add(new_usermanga)
+
             db.session.add(new_order)
             db.session.commit()
 
