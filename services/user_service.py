@@ -218,9 +218,13 @@ class UserService:
 
     @staticmethod
     def get_purchased_manga(user_id):
-        usermanga = Orders.query.filter_by(client=user_id).first()
+        usermanga = Orders.query.filter_by(client=user_id).all()
 
-        return {"code": usermanga.order_code, "sum": usermanga.order_sum, "content": usermanga.buying_content["buying_content"]}
+        response = []
+        for purchase in usermanga:
+            response.append({"code": purchase.order_code, "sum": purchase.order_sum, "content": purchase.buying_content["buying_content"]})
+
+        return response
 
     @staticmethod
     def get_user_manga(user_id):
