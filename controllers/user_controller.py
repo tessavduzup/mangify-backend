@@ -18,13 +18,13 @@ class UserController(Resource):
     """Класс обработчиков запроса для работы с таблицей пользователей"""
 
     @staticmethod
-    @app.route("/auth", methods=["POST"])
+    @app.route("/api/v1//auth", methods=["POST"])
     def auth():
         request_data = request.get_json()
         return _user_service.auth(request_data)
 
     @staticmethod
-    @app.route("/confirm_email", methods=["POST"])
+    @app.route("/api/v1//confirm_email", methods=["POST"])
     def email_confirmation():
         request_data = request.get_json()
         return _user_service.email_confirmation(request_data)
